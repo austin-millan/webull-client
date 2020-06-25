@@ -16,7 +16,7 @@ func TestLogin(t *testing.T) {
 		return
 	}
 	asrt := assert.New(t)
-	c := NewClient()
+	c := NewClient(nil)
 	err := c.Login(Credentials{
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
@@ -36,7 +36,7 @@ func TestTradeToken(t *testing.T) {
 		return
 	}
 	asrt := assert.New(t)
-	c := NewClient()
+	c := NewClient(nil)
 
 	// Must get access token first
 	err := c.Login(Credentials{

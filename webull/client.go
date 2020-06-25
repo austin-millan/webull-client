@@ -2,7 +2,10 @@ package webull
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -24,9 +27,15 @@ const (
 	TradeEndpoint          = "https://tradeapi.webulltrade.com/api/trade"
 )
 
+// ErrAuthExpired signals the user must retrieve a new token
+var ErrAuthExpired = errors.New("Authentication token expired")
+
 // Client is a helpful abstraction around some common metadata required for
 // API operations.
 type Client struct {
+	Username string
+	Pwd      string
+
 	AccessToken           string
 	AccessTokenExpiration time.Time
 	RefreshToken          string
@@ -40,9 +49,17 @@ type Client struct {
 }
 
 // NewClient will return a new Webull client
-func NewClient() *Client {
+func NewClient(creds *Credentials) *Client {
 	c := &Client{
 		httpClient: &http.Client{Timeout: time.Second * 10},
+	}
+	if creds != nil {
+		c.Username = creds.Username
+		c.DeviceID = creds.ClientID
+		// UTF-8 encoded salted password
+		hasher := md5.New()
+		hasher.Write([]byte(PasswordSalt + creds.Password))
+		c.Pwd = hex.EncodeToString(hasher.Sum(nil))
 	}
 	return c
 }
@@ -50,7 +67,11 @@ func NewClient() *Client {
 // GetAndDecode retrieves from the endpoint and unmarshals resulting json into
 // the provided destination interface, which must be a pointer.
 func (c *Client) GetAndDecode(url string, dest interface{}, headers map[string]string) error {
-	req, err := http.NewRequest("GET", url, nil)
+	if time.Now().After(c.AccessTokenExpiration) {
+		return ErrAuthExpired
+	}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req.Header.Add("Content-Type", "application/json")
 	for key, val := range headers {
 		req.Header.Add(key, val)
 	}
