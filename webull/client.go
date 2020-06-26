@@ -3,13 +3,20 @@ package webull
 import (
 	"bytes"
 	"crypto/md5"
-	"encoding/hex"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
+
+	// "strings"
+
+	// "crypto/md5"
+	// "encoding/hex"
+	"encoding/hex"
+	"encoding/json"
+
+	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
@@ -20,11 +27,12 @@ const (
 	QuotesEndpoint         = "https://quoteapi.webull.com/api"
 	UserEndpoint           = "https://userapi.webull.com/api"
 	BrokerQuotesEndpoint   = "https://quoteapi.webullbroker.com/api"
-	BrokerQuotesGWEndpoint = "https://quoteapi.webullbroker.com/api"
+	BrokerQuotesGWEndpoint = "https://quotes-gw.webullbroker.com/api"
 	SecuritiesEndpoint     = "https://securitiesapi.webullbroker.com/api"
 	UserBrokerEndpoint     = "https://userapi.webullbroker.com/api"
 	PaperTradeEndpoint     = "https://act.webullbroker.com/webull-paper-center/api"
 	TradeEndpoint          = "https://tradeapi.webulltrade.com/api/trade"
+	StockInfoEndpoint      = "https://infoapi.webull.com/api"
 )
 
 // ErrAuthExpired signals the user must retrieve a new token
@@ -33,8 +41,11 @@ var ErrAuthExpired = errors.New("Authentication token expired")
 // Client is a helpful abstraction around some common metadata required for
 // API operations.
 type Client struct {
-	Username string
-	Pwd      string
+	Username       string
+	HashedPassword string
+	AccountType    model.AccountType
+	MFA            string
+	UUID           string
 
 	AccessToken           string
 	AccessTokenExpiration time.Time
@@ -49,31 +60,78 @@ type Client struct {
 }
 
 // NewClient will return a new Webull client
-func NewClient(creds *Credentials) *Client {
-	c := &Client{
+func NewClient(creds *Credentials) (c *Client, err error) {
+	c = &Client{
 		httpClient: &http.Client{Timeout: time.Second * 10},
 	}
 	if creds != nil {
+		c.DeviceID = creds.DeviceID
 		c.Username = creds.Username
-		c.DeviceID = creds.ClientID
-		// UTF-8 encoded salted password
+		c.AccountType = creds.AccountType
+		if creds.DeviceID == "" {
+			c.DeviceID = DefaultDeviceID
+		}
 		hasher := md5.New()
 		hasher.Write([]byte(PasswordSalt + creds.Password))
-		c.Pwd = hex.EncodeToString(hasher.Sum(nil))
+		c.HashedPassword = hex.EncodeToString(hasher.Sum(nil))
+		if err != nil {
+			return nil, fmt.Errorf("Got error: %v", err)
+		}
+		_, err := c.Token()
+		if err != nil {
+			return nil, err
+		}
 	}
-	return c
+	return
 }
 
 // GetAndDecode retrieves from the endpoint and unmarshals resulting json into
 // the provided destination interface, which must be a pointer.
-func (c *Client) GetAndDecode(url string, dest interface{}, headers map[string]string) error {
+func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string]string, urlValues *map[string]string) error {
 	if time.Now().After(c.AccessTokenExpiration) {
 		return ErrAuthExpired
 	}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	req.Header.Add("Content-Type", "application/json")
-	for key, val := range headers {
-		req.Header.Add(key, val)
+	v := url.Values{}
+	if urlValues != nil {
+		for key, val := range *urlValues {
+			v.Add(key, val)
+		}
+	}
+	URL.RawQuery = v.Encode()
+	fmt.Printf(URL.String())
+
+	req, err := http.NewRequest(http.MethodGet, URL.String(), nil)
+	if headers != nil {
+		for key, val := range *headers {
+			req.Header.Add(key, val)
+		}
+	}
+	if err != nil {
+		return err
+	}
+	return c.DoAndDecode(req, dest)
+}
+
+// PostAndDecode retrieves from the endpoint and unmarshals resulting json into
+// the provided destination interface, which must be a pointer.
+func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[string]string, urlValues *map[string]string, payload []byte) error {
+	if time.Now().After(c.AccessTokenExpiration) {
+		return ErrAuthExpired
+	}
+	v := url.Values{}
+	if urlValues != nil {
+		for key, val := range *urlValues {
+			v.Set(key, val)
+		}
+	}
+	URL.RawQuery = v.Encode()
+	fmt.Printf("%s", URL.String())
+
+	req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload))
+	if headers != nil {
+		for key, val := range *headers {
+			req.Header.Add(key, val)
+		}
 	}
 	if err != nil {
 		return err
@@ -96,7 +154,19 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		var e model.ErrorBody
 		err = json.NewDecoder(io.TeeReader(res.Body, b)).Decode(&e)
 		if err != nil {
+			// anything
+			body, err := ioutil.ReadAll(res.Body)
+			var anyBody interface{}
+			if err = json.Unmarshal(body, &anyBody); err != nil {
+				return fmt.Errorf("Unable to marshal body as interface")
+			}
 			return fmt.Errorf("got response %q and could not decode error body %q", res.Status, b.String())
+		}
+		body, err := ioutil.ReadAll(res.Body)
+		// anything
+		var anyBody interface{}
+		if err = json.Unmarshal(body, &anyBody); err != nil {
+			return fmt.Errorf("Unable to marshal body as interface")
 		}
 		return fmt.Errorf(e.Msg)
 	}
@@ -104,13 +174,16 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 	if err != nil {
 		return fmt.Errorf("Got read error on body: %s", err.Error())
 	}
-	// anything
-	var anyBody interface{}
-	if err = json.Unmarshal(body, &anyBody); err != nil {
-		return fmt.Errorf("Unable to marshal body as interface")
+	if len(body) == 0 {
+		return nil
 	}
 
 	if err = json.Unmarshal(body, &dest); err != nil {
+		// anything
+		var anyBody interface{}
+		if err = json.Unmarshal(body, &anyBody); err != nil {
+			return fmt.Errorf("Unable to marshal body as interface")
+		}
 		return fmt.Errorf("Got JSON unmarshal error on body: %s", err.Error())
 	}
 	return err

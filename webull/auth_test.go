@@ -16,14 +16,18 @@ func TestLogin(t *testing.T) {
 		return
 	}
 	asrt := assert.New(t)
-	c := NewClient(nil)
-	err := c.Login(Credentials{
+	c, err := NewClient(nil)
+	asrt.Empty(err)
+	err = c.Login(Credentials{
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
 	})
-	asrt.NoError(err)
+	asrt.Empty(err)
 	asrt.NotEmpty(c.AccessToken)
+	res, err := c.Token()
+	asrt.Empty(err)
+	asrt.NotNil(res)
 }
 
 func TestTradeToken(t *testing.T) {
@@ -36,10 +40,10 @@ func TestTradeToken(t *testing.T) {
 		return
 	}
 	asrt := assert.New(t)
-	c := NewClient(nil)
-
+	c, err := NewClient(nil)
+	asrt.Empty(err)
 	// Must get access token first
-	err := c.Login(Credentials{
+	err = c.Login(Credentials{
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
@@ -50,6 +54,6 @@ func TestTradeToken(t *testing.T) {
 		Username: os.Getenv("WEBULL_USERNAME"),
 		TradePIN: os.Getenv("WEBULL_PIN"),
 	})
-	asrt.NoError(err)
+	asrt.Empty(err)
 	asrt.NotEmpty(c.TradeToken)
 }

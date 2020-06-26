@@ -3,7 +3,9 @@ package webull
 import (
 	"os"
 	"testing"
+
 	"github.com/stretchr/testify/assert"
+	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
 func TestGetAccounts(t *testing.T) {
@@ -11,21 +13,16 @@ func TestGetAccounts(t *testing.T) {
 		t.Skip("No username set")
 		return
 	}
-	c := NewClient()
+	c, err := NewClient(nil)
 	asrt := assert.New(t)
-	err := c.Login(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		Password: os.Getenv("WEBULL_PASSWORD"),
+	err = c.Login(Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
 	})
-	if err != nil {
-		t.Errorf("Got error: %s", err.Error())
-		t.FailNow()
-	}
+	asrt.Empty(err)
 	res, err := c.GetAccounts()
-	if err != nil {
-		t.Errorf("%v", err)
-		return
-	}
+	asrt.Empty(err)
 	asrt.True(res.Success)
 }
 
@@ -35,29 +32,39 @@ func TestGetAccount(t *testing.T) {
 		return
 	}
 	asrt := assert.New(t)
-	c := NewClient()
-	err := c.Login(Credentials{
+	c, err := NewClient(nil)
+	err = c.Login(Credentials{
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
 	})
-	if err != nil {
-		t.Errorf("Got error: %s", err.Error())
-		t.FailNow()
-	}
+	asrt.Empty(err)
 	accs, err := c.GetAccounts()
-	if err != nil {
-		t.Errorf("%v", err)
-		return
-	}
+	asrt.Empty(err)
 	asrt.True(accs.Success)
 	if len(accs.Data) < 1 {
 		t.Errorf("No accounts returned")
 		t.FailNow()
 	}
-	_, err = c.GetAccount(int(accs.Data[0].SecAccountId))
-	if err != nil {
-		t.Errorf("%v", err)
+	acc, err := c.GetAccount(int(accs.Data[0].SecAccountId))
+	asrt.Empty(err)
+	asrt.NotNil(acc)
+}
+
+func TestGetAccountID(t *testing.T) {
+	if os.Getenv("WEBULL_USERNAME") == "" {
+		t.Skip("No username set")
 		return
 	}
-	// asrt.True(acc.Success)
+	asrt := assert.New(t)
+	c, err := NewClient(nil)
+	err = c.Login(Credentials{
+		Username: os.Getenv("WEBULL_USERNAME"),
+		Password: os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+	})
+	asrt.Empty(err)
+	res, err := c.GetAccountID()
+	asrt.Empty(err)
+	asrt.NotEmpty(res)
 }
