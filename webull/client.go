@@ -7,10 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 
-	// "strings"
-
-	// "crypto/md5"
-	// "encoding/hex"
 	"encoding/hex"
 	"encoding/json"
 
@@ -59,7 +55,7 @@ type Client struct {
 	httpClient *http.Client
 }
 
-// NewClient will return a new Webull client
+// NewClient is a constructor for the Webull-Client client
 func NewClient(creds *Credentials) (c *Client, err error) {
 	c = &Client{
 		httpClient: &http.Client{Timeout: time.Second * 10},

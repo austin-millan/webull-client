@@ -1,10 +1,11 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"os"
 
-	// "gitlab.com/brokerage-api/webull-client/webull"
+	"gitlab.com/brokerage-api/webull-client/webull"
+	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
 func main() {
@@ -14,6 +15,16 @@ func main() {
 	if os.Getenv("WEBULL_PASSWORD") == "" {
 		return
 	}
+	c, err := webull.NewClient(&webull.Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%v", c.Username)
+
 	// o := &webull.CredsCacher{
 	// 	Creds: &webull.OAuth{
 	// 		Username: os.Getenv("WEBULL_USERNAME"),

@@ -1,16 +1,14 @@
 package webull
 
 import (
-	// "fmt"
 
 	"fmt"
 	"net/url"
-	// "strconv"
 
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetStockOptions returns options quotes.
+// GetStockOptions queries for options quotes.
 func (c *Client) GetStockOptions(tickerID, expireDate, direction string, count, includeWeekly, queryAll int32) (*model.GetStockOptionsResponse, error) {
 	var (
 		u, _        = url.Parse(BrokerQuotesEndpoint + "/quote/option/" + tickerID + "/list")
@@ -40,11 +38,11 @@ func (c *Client) GetStockOptions(tickerID, expireDate, direction string, count, 
 	return &response, err
 }
 
-// GetOptionsQuotes returns options quotes.
-func (c *Client) GetOptionsQuotes(tickerID, derivativeIds string) (*model.GetOptionsQuotesResponse, error) {
+// GetOptionsQuotes gets options quotes.
+func (c *Client) GetOptionsQuotes(tickerID, derivativeIds string) (*model.GetStockOptionsResponse, error) {
 	var (
 		u, _        = url.Parse(BrokerQuotesGWEndpoint + "/quote/option/query/list")
-		response    model.GetOptionsQuotesResponse
+		response    model.GetStockOptionsResponse
 		headersMap  = make(map[string]string)
 		queryParams = make(map[string]string)
 	)
@@ -52,7 +50,7 @@ func (c *Client) GetOptionsQuotes(tickerID, derivativeIds string) (*model.GetOpt
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 
-	queryParams["tickerID"] = tickerID
+	queryParams[QueryKeyTickerID] = tickerID
 	queryParams["derivativeIds"] = derivativeIds
 
 	err := c.GetAndDecode(*u, &response, &headersMap, &queryParams)

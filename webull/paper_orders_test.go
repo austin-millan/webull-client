@@ -10,7 +10,7 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-func TestPlacePaperTrade(t *testing.T) {
+func TestPlacePaperOrder(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")
 		return
@@ -41,7 +41,7 @@ func TestPlacePaperTrade(t *testing.T) {
 		AccountType: model.AccountType(2),
 	})
 
-	res, err := c.PlacePaperTrade(paperAccID, model.PostStockOrderRequest{
+	res, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
 		Action:                    model.BUY,
 		ComboType:                 "NORMAL",
 		LmtPrice:                  200,
@@ -72,7 +72,7 @@ func TestGetPaperOrders(t *testing.T) {
 	paperTradeAccID, err := c.GetPaperTradeAccountID()
 	asrt.Empty(err)
 	asrt.NotEmpty(paperTradeAccID)
-	paperTradeOrders, err := c.GetPaperTradeOrders(paperTradeAccID, "", "ORDER", model.WORKING)
+	paperTradeOrders, err := c.GetPaperOrders(paperTradeAccID, "", "ORDER", model.WORKING)
 	err = c.TradeLogin(Credentials{
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
@@ -83,7 +83,7 @@ func TestGetPaperOrders(t *testing.T) {
 	asrt.NotNil(paperTradeOrders)
 }
 
-func TestCancelPaperTrade(t *testing.T) {
+func TestCancelPaperOrder(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")
 		return
@@ -115,7 +115,7 @@ func TestCancelPaperTrade(t *testing.T) {
 	})
 
 	// Place Trade
-	placed, err := c.PlacePaperTrade(paperAccID, model.PostStockOrderRequest{
+	placed, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
 		Action:                    model.BUY,
 		ComboType:                 "NORMAL",
 		LmtPrice:                  200,
@@ -130,12 +130,12 @@ func TestCancelPaperTrade(t *testing.T) {
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	cancelled, err := c.CancelPaperTrade(paperAccID, fmt.Sprintf("%d", placed.OrderId))
+	cancelled, err := c.CancelPaperOrder(paperAccID, fmt.Sprintf("%d", placed.OrderId))
 	asrt.Empty(err)
 	asrt.NotEmpty(cancelled)
 }
 
-func TestModifyPaperTrade(t *testing.T) {
+func TestModifyPaperOrder(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")
 		return
@@ -167,7 +167,7 @@ func TestModifyPaperTrade(t *testing.T) {
 	})
 
 	// Place Trade
-	placed, err := c.PlacePaperTrade(paperAccID, model.PostStockOrderRequest{
+	placed, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
 		Action:                    model.BUY,
 		ComboType:                 "NORMAL",
 		LmtPrice:                  200,
@@ -182,7 +182,7 @@ func TestModifyPaperTrade(t *testing.T) {
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	_, err = c.ModifyPaperTrade(paperAccID, fmt.Sprintf("%d", placed.OrderId), model.PostStockOrderRequest{
+	_, err = c.ModifyPaperOrder(paperAccID, fmt.Sprintf("%d", placed.OrderId), model.PostStockOrderRequest{
 		Action:                    model.BUY,
 		ComboType:                 "NORMAL",
 		LmtPrice:                  200,

@@ -8,7 +8,7 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetAccounts returns all the accounts associated with a login/client.
+// GetAccounts gets all associated accounts
 func (c *Client) GetAccounts() (*model.GetSecurityAccountsResponse, error) {
 	var (
 		u, _       = url.Parse(TradeEndpoint + "/account/getSecAccountList/v4")
@@ -26,7 +26,7 @@ func (c *Client) GetAccounts() (*model.GetSecurityAccountsResponse, error) {
 	return &response, err
 }
 
-// GetAccountID returns an account ID
+// GetAccountID gets an account ID
 func (c *Client) GetAccountID() (string, error) {
 	res, err := c.GetAccounts()
 	if err != nil {
@@ -41,7 +41,7 @@ func (c *Client) GetAccountID() (string, error) {
 	return "", err
 }
 
-// GetAccount returns an account
+// GetAccount gets account details for account `accountID`
 func (c *Client) GetAccount(accountID int) (*model.GetAccountResponse, error) {
 	var (
 		path       = TradeEndpoint + "/v2/home/" + strconv.Itoa(int(accountID))

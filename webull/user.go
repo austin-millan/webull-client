@@ -6,7 +6,7 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetUser returns user details of your account (e.g. name, email/phone, region, ...).
+// GetUser gets user your details
 func (c *Client) GetUser() (*model.GetUserDetailsResponse, error) {
 	var (
 		u, _        = url.Parse(UserEndpoint + "/user")
@@ -16,7 +16,6 @@ func (c *Client) GetUser() (*model.GetUserDetailsResponse, error) {
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
-
 
 	err := c.GetAndDecode(*u, &response, &headersMap, nil)
 	if err != nil {

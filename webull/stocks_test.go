@@ -8,6 +8,24 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
+func TestGetTicker(t *testing.T) {
+	if os.Getenv("WEBULL_USERNAME") == "" {
+		t.Skip("No username set")
+		return
+	}
+	asrt := assert.New(t)
+	c, err := NewClient(&Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+	})
+	asrt.Empty(err)
+	asrt.NotNil(c)
+	ticker, err := c.GetTicker("AAPL")
+	asrt.Empty(err)
+	asrt.NotEmpty(ticker)
+}
+
 func TestGetTickerID(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")

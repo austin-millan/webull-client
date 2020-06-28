@@ -1,14 +1,12 @@
 package webull
 
 import (
-	// "fmt"
 	"net/url"
-	// "strconv"
 
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetAlerts returns alerts.
+// GetAlerts gets all alerts.
 func (c *Client) GetAlerts() (*model.GetAlertsResponse, error) {
 	var (
 		u, _       = url.Parse(UserBrokerEndpoint + "/user/warning/v2/query/tickers")

@@ -7,12 +7,12 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetPaperTradeAccounts returns user paper trade accounts
-func (c *Client) GetPaperTradeAccounts() (*[]model.PaperTradeAccount, error) {
+// GetPaperTradeAccounts gets information for all paper accounts.
+func (c *Client) GetPaperTradeAccounts() (*[]model.PaperAccount, error) {
 	var (
 		u, _       = url.Parse(PaperTradeEndpoint + "/myaccounts/true")
 		headersMap = make(map[string]string)
-		response   []model.PaperTradeAccount
+		response   []model.PaperAccount
 	)
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -25,7 +25,8 @@ func (c *Client) GetPaperTradeAccounts() (*[]model.PaperTradeAccount, error) {
 	return &response, err
 }
 
-// GetPaperTradeAccountID returns user paper trade accounts
+// GetPaperTradeAccountID is a a helper function for getting a paper trading account.
+// Currently only retrieves the first account.
 func (c *Client) GetPaperTradeAccountID() (string, error) {
 	res, err := c.GetPaperTradeAccounts()
 	if err != nil {

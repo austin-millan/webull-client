@@ -1,6 +1,7 @@
 webull-client
 .env
 .vscode/
+creds*
 
 # Binaries for programs and plugins
 *.exe

@@ -8,7 +8,7 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetTicker returns X.
+// GetTicker gets ticker information for a provided stock symbol
 func (c *Client) GetTicker(symbol string) (*model.LookupTickerResponse, error) {
 	var (
 		u, _        = url.Parse(StockInfoEndpoint + "/search/tickers5")
@@ -31,7 +31,7 @@ func (c *Client) GetTicker(symbol string) (*model.LookupTickerResponse, error) {
 	return &response, err
 }
 
-// GetTickerID X
+// GetTickerID is a helper function for getting a ticker ID from a stock symbol
 func (c *Client) GetTickerID(symbol string) (string, error) {
 	res, err := c.GetTicker(symbol)
 	if err != nil {
@@ -46,7 +46,7 @@ func (c *Client) GetTickerID(symbol string) (string, error) {
 	return "", nil
 }
 
-// GetRealtimeStockQuote X
+// GetRealtimeStockQuote gets real-time data for ticker `tickerID`
 func (c *Client) GetRealtimeStockQuote(tickerID string) (*model.GetStockQuoteResponse, error) {
 	var (
 		u, _        = url.Parse(QuotesEndpoint + "/quote/tickerRealTimes/v5/" + tickerID)
@@ -64,7 +64,7 @@ func (c *Client) GetRealtimeStockQuote(tickerID string) (*model.GetStockQuoteRes
 	return &response, err
 }
 
-// GetStockFundamentals X
+// GetStockFundamentals gets stock fundamentals for ticker `tickerID`
 func (c *Client) GetStockFundamentals(tickerID string) (*model.GetFundamentalsResponse, error) {
 	var (
 		u, _        = url.Parse(QuotesEndpoint + "/securities/financial/index/" + tickerID)
@@ -82,7 +82,7 @@ func (c *Client) GetStockFundamentals(tickerID string) (*model.GetFundamentalsRe
 	return &response, err
 }
 
-// GetActiveGainersLosers X
+// GetActiveGainersLosers gets the day's active gainers or losers.
 func (c *Client) GetActiveGainersLosers(direction, regionID, userRegionID string) (*[]model.ActiveGainersLosers, error) {
 	var (
 		u, _        = url.Parse(SecuritiesEndpoint + "/securities/market/v5/card/stockActivityPc." + direction + "/list")
@@ -104,7 +104,7 @@ func (c *Client) GetActiveGainersLosers(direction, regionID, userRegionID string
 	return &response, err
 }
 
-// GetStockAnalysis returns X.
+// GetStockAnalysis gets Webull stock analysis for tickerID `tickerID`
 func (c *Client) GetStockAnalysis(tickerID string) (*model.GetStockAnalysisResponse, error) {
 	var (
 		u, _        = url.Parse(StockInfoEndpoint + "/securities/ticker/v5/analysis/" + tickerID)

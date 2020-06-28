@@ -1,14 +1,12 @@
 package webull
 
 import (
-	// "fmt"
 	"net/url"
-	// "strconv"
 
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
-// GetDividends returns dividends.
+// GetAccountDividends gets account `accountID` total dividends.
 func (c *Client) GetAccountDividends(accountID string) (*model.GetDividendsResponse, error) {
 	var (
 		u, _        = url.Parse(TradeEndpoint + "/v2/account/" + accountID + "/dividends")
