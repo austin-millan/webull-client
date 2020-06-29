@@ -12,9 +12,18 @@ A Golang library for the [Webull](https://www.webull.com/) brokerage.
 
 ### Get Authorization
 
+First set some environment variables:
+
+```bash
+export WEBULL_USERNAME='your.email@domain.com'
+export WEBULL_PASSWORD='SuperStrongPasswerrrdd12345'
+export WEBULL_PIN='123456'
+```
+
 Webull requires a MFA email when authenticating new devices.
 
 ```go
+
 func main() {
 	// Authenticate your device
 	c, _ := webull.NewClient(nil)
@@ -29,7 +38,9 @@ func main() {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
         AccountType: model.AccountType(2),
 		MFA: 123456,
-	})
+    })
+}
+
 ```
 
 ### Get Dividends
@@ -40,7 +51,9 @@ Now your subsequent API calls can simply use your device ID and token. Your toke
 or using the `NewClient` constructor:
 
 ```go
+
 func main() {
+
 	// Setup your client
 	c, _ := webull.NewClient(&webull.Credentials{
 		Username:    os.Getenv("WEBULL_USERNAME"),
@@ -56,6 +69,7 @@ func main() {
 		fmt.Errorf("%s", err.Error())
 	}
 }
+
 ```
 
 ## Disclaimer
