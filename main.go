@@ -9,49 +9,17 @@ import (
 )
 
 func main() {
-	if os.Getenv("WEBULL_USERNAME") == "" {
-		return
-	}
-	if os.Getenv("WEBULL_PASSWORD") == "" {
-		return
-	}
-	c, err := webull.NewClient(&webull.Credentials{
+	// Setup your client
+	c, _ := webull.NewClient(&webull.Credentials{ // check your email to get MFA code
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client"),
 	})
-	if err != nil {
-		panic(err)
+	accID, _ := c.GetAccountID()
+	if divs, err := c.GetAccountDividends(accID); divs != nil {
+		fmt.Printf("Dividends for account [%s]: %s", accID, divs.DividendTotal)
+	} else {
+		fmt.Errorf("%s", err.Error())
 	}
-	fmt.Printf("%v", c.Username)
-
-	// o := &webull.CredsCacher{
-	// 	Creds: &webull.OAuth{
-	// 		Username: os.Getenv("WEBULL_USERNAME"),
-	// 		Password: os.Getenv("WEBULL_PASSWORD"),
-	// 	},
-	// }
-	// o :=  &webull.Auth{
-	// 	Username: os.Getenv("WEBULL_USERNAME"),
-	// 	Password: os.Getenv("WEBULL_PASSWORD"),
-	// }
-	// c, err := webull.Dial(&webull.CredsCacher{Creds: o})
-	// if err != nil {
-	// 	fmt.Errorf("Got error dialing Webull: %v", err)
-	// }
-	// res, err := c.GetAccounts()
-	// if err != nil {
-	// 	fmt.Errorf("Got error dialing Webull: %v", err)
-	// }
-	// fmt.Printf("%v", res)
-	// // c.Token
-	// fmt.Printf(c.AccessToken)
-
-	// //err
-	// i, err := c.GetInstrumentForSymbol("SPY")
-	// if err != nil {
-	// 	fmt.Errorf("Unable to get SPY instrument")
-	// 	return
-	// }
-	// fmt.Printf("%v", i)
 }

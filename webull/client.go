@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/md5"
 	"errors"
-	"io"
 	"io/ioutil"
 
 	"encoding/hex"
@@ -42,6 +41,7 @@ type Client struct {
 	AccountType    model.AccountType
 	MFA            string
 	UUID           string
+	DeviceName     string
 
 	AccessToken           string
 	AccessTokenExpiration time.Time
@@ -60,6 +60,7 @@ func NewClient(creds *Credentials) (c *Client, err error) {
 	c = &Client{
 		httpClient: &http.Client{Timeout: time.Second * 10},
 	}
+	fmt.Printf("%v", creds)
 	if creds != nil {
 		c.DeviceID = creds.DeviceID
 		c.Username = creds.Username
@@ -111,8 +112,10 @@ func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string
 // PostAndDecode retrieves from the endpoint and unmarshals resulting json into
 // the provided destination interface, which must be a pointer.
 func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[string]string, urlValues *map[string]string, payload []byte) error {
-	if time.Now().After(c.AccessTokenExpiration) {
-		return ErrAuthExpired
+	if c.AccessToken != "" {
+		if time.Now().After(c.AccessTokenExpiration) {
+			return ErrAuthExpired
+		}
 	}
 	v := url.Values{}
 	if urlValues != nil {
@@ -136,7 +139,8 @@ func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[strin
 }
 
 // DoAndDecode provides useful abstractions around common errors and decoding
-// issues.
+// issues. Ideally unmarshals into `dest`. On error, it'll use the Webull `ErrorBody` model.
+// Last fallback is a plain interface.
 func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 	req.Header.Add("Content-Type", "application/json")
 	res, err := c.httpClient.Do(req)
@@ -144,21 +148,22 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		return err
 	}
 	defer res.Body.Close()
-
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return fmt.Errorf("Got read error on body: %s", err.Error())
+	}
 	if res.StatusCode/100 != 2 {
 		b := &bytes.Buffer{}
 		var e model.ErrorBody
-		err = json.NewDecoder(io.TeeReader(res.Body, b)).Decode(&e)
+		err = json.Unmarshal(body, &e)
 		if err != nil {
 			// anything
-			body, err := ioutil.ReadAll(res.Body)
 			var anyBody interface{}
 			if err = json.Unmarshal(body, &anyBody); err != nil {
 				return fmt.Errorf("Unable to marshal body as interface")
 			}
 			return fmt.Errorf("got response %q and could not decode error body %q", res.Status, b.String())
 		}
-		body, err := ioutil.ReadAll(res.Body)
 		// anything
 		var anyBody interface{}
 		if err = json.Unmarshal(body, &anyBody); err != nil {
@@ -166,14 +171,6 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		}
 		return fmt.Errorf(e.Msg)
 	}
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return fmt.Errorf("Got read error on body: %s", err.Error())
-	}
-	if len(body) == 0 {
-		return nil
-	}
-
 	if err = json.Unmarshal(body, &dest); err != nil {
 		// anything
 		var anyBody interface{}

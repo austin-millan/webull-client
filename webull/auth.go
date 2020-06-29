@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+
+	// "fmt"
 	"io"
 	"io/ioutil"
 
@@ -20,7 +22,7 @@ import (
 
 const (
 	// DefaultDeviceID if none is supplied by user.
-	DefaultDeviceID = "2292c4714f144eb08ed3edec7f7ce289"
+	DefaultDeviceID = "2292c4714f144eb08ed3edec7f7ce284"
 	// PasswordSalt is used for salting your password
 	PasswordSalt = "wl_app-a&b@!423^"
 	// DefaultDeviceName is a device name
@@ -36,6 +38,7 @@ type Credentials struct {
 	DeviceID    string
 	TradePIN    string
 	MFA         string
+	DeviceName  string
 	AccountType model.AccountType
 	Creds       oauth2.TokenSource
 }
@@ -47,17 +50,22 @@ func (c *Client) Token() (*oauth2.Token, error) {
 		response   model.PostLoginResponse
 		httpClient = http.Client{Timeout: time.Second * 10}
 		cliID      = c.DeviceID
+		deviceName = c.DeviceName
 	)
 	// Client ID
 	if cliID == "" {
 		cliID = DefaultDeviceID
 	}
+	// Device Name
+	if deviceName == "" {
+		deviceName = DefaultDeviceName
+	}
 	// Login request body
 	requestBody, err := json.Marshal(model.PostLoginParametersRequest{
 		Account:     c.Username,
 		AccountType: c.AccountType,
-		DeviceId:    DefaultDeviceID,
-		DeviceName:  DefaultDeviceName,
+		DeviceId:    cliID,
+		DeviceName:  deviceName,
 		Grade:       0.0,
 		Pwd:         c.HashedPassword,
 		RegionId:    1,
@@ -69,12 +77,10 @@ func (c *Client) Token() (*oauth2.Token, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create request")
 	}
-
+	tok := oauth2.Token{}
 	res, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
 	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
 
 	if res.StatusCode/100 != 2 {
 		b := &bytes.Buffer{}
@@ -85,7 +91,7 @@ func (c *Client) Token() (*oauth2.Token, error) {
 		}
 		return nil, fmt.Errorf(e.Msg)
 	}
-	body, err := ioutil.ReadAll(res.Body)
+
 	if err != nil {
 		return nil, fmt.Errorf("Got read error on body: %s", err.Error())
 	}
@@ -95,16 +101,11 @@ func (c *Client) Token() (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	tok := oauth2.Token{
-		AccessToken:  response.AccessToken,
-		TokenType:    "bleh",
-		RefreshToken: response.RefreshToken,
-	}
 	tok.Expiry, err = time.Parse(DefaultTokenExpiryFormat, response.TokenExpireTime)
-
-	c.AccessToken = tok.AccessToken
-	c.RefreshToken = tok.RefreshToken
 	c.AccessTokenExpiration = tok.Expiry
+	tok.TokenType = "Token"
+	tok.AccessToken, c.AccessToken = response.AccessToken, response.AccessToken
+	tok.RefreshToken, c.RefreshToken = response.RefreshToken, response.RefreshToken
 	c.UUID = response.Uuid
 	return &tok, nil
 }
@@ -118,14 +119,42 @@ func (c *Client) Login(creds Credentials) (err error) {
 	)
 
 	// Client ID
-	c.DeviceID = creds.DeviceID
-	if c.DeviceID == "" {
-		c.DeviceID = DefaultDeviceID
+	if creds.DeviceID != "" {
+		c.DeviceID = creds.DeviceID
+	} else {
+		if c.DeviceID == "" {
+			c.DeviceID = DefaultDeviceID
+		}
 	}
-	// UTF-8 encoded salted password
-	hasher.Write([]byte(PasswordSalt + creds.Password))
-	c.HashedPassword = hex.EncodeToString(hasher.Sum(nil))
-	c.Username = creds.Username
+
+	// Client Name
+	if creds.DeviceName != "" {
+		c.DeviceName = creds.DeviceName
+	} else {
+		if c.DeviceName == "" {
+			c.DeviceName = DefaultDeviceName
+		}
+	}
+
+	// Client Name
+	if creds.Username != "" {
+		c.Username = creds.Username
+	} else {
+		if c.Username == "" {
+			return fmt.Errorf("Username required")
+		}
+	}
+
+	// Client Name
+	if creds.Password != "" {
+		// UTF-8 encoded salted password
+		hasher.Write([]byte(PasswordSalt + creds.Password))
+		c.HashedPassword = hex.EncodeToString(hasher.Sum(nil))
+	} else {
+		if c.HashedPassword == "" {
+			return fmt.Errorf("Password has not been set")
+		}
+	}
 	c.AccountType = creds.AccountType
 
 	// Login request body
@@ -133,7 +162,7 @@ func (c *Client) Login(creds Credentials) (err error) {
 		Account:     c.Username,
 		AccountType: c.AccountType,
 		DeviceId:    c.DeviceID,
-		DeviceName:  DefaultDeviceName,
+		DeviceName:  c.DeviceName,
 		Grade:       0.0,
 		Pwd:         c.HashedPassword,
 		RegionId:    1,
@@ -163,16 +192,47 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 		u, _     = url.Parse(TradeEndpoint + "/login")
 		response model.PostTradeTokenResponse
 		hasher   = md5.New()
+		pwd string
 	)
 
 	// Client ID
-	c.DeviceID = creds.DeviceID
-	if c.DeviceID == "" {
-		c.DeviceID = DefaultDeviceID
+	if creds.DeviceID != "" {
+		c.DeviceID = creds.DeviceID
+	} else {
+		if c.DeviceID == "" {
+			c.DeviceID = DefaultDeviceID
+		}
 	}
-	// UTF-8 encoded salted password
-	hasher.Write([]byte(PasswordSalt + creds.TradePIN))
-	pwd := hex.EncodeToString(hasher.Sum(nil))
+
+	// Client Name
+	if creds.DeviceName != "" {
+		c.DeviceName = creds.DeviceName
+	} else {
+		if c.DeviceName == "" {
+			c.DeviceName = DefaultDeviceName
+		}
+	}
+
+	// Client Name
+	if creds.Username != "" {
+		c.Username = creds.Username
+	} else {
+		if c.Username == "" {
+			return fmt.Errorf("Username required")
+		}
+	}
+
+	// Client Name
+	if creds.Password != "" {
+		// UTF-8 encoded salted password
+		hasher.Write([]byte(PasswordSalt + creds.TradePIN))
+		pwd = hex.EncodeToString(hasher.Sum(nil))
+	} else {
+		if c.HashedPassword == "" {
+			return fmt.Errorf("Password has not been set")
+		}
+	}
+	c.AccountType = creds.AccountType
 
 	// Login request body
 	request := model.PostLoginParametersRequest{
@@ -200,6 +260,41 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 	if response.Success {
 		c.TradeToken = response.Data.TradeToken
 		c.TradeTokenExpiration = time.Now().Add(time.Duration(response.Data.TradeTokenExpireIn) * time.Millisecond) // Assuming ms?
+	}
+	return nil
+}
+
+// GetMFA requests for a 2FA code
+func (c *Client) GetMFA(creds Credentials) (err error) {
+	var (
+		// Login URL
+		u, _        = url.Parse(UserBrokerEndpoint + "/passport/verificationCode/sendCode")
+		response    interface{}
+		queryParams = make(map[string]string)
+		headersMap  = make(map[string]string)
+	)
+
+	// Client ID
+	c.DeviceID = creds.DeviceID
+	if c.DeviceID == "" {
+		c.DeviceID = DefaultDeviceID
+	}
+
+	headersMap["did"] = c.DeviceID
+
+	queryParams["deviceId"] = c.DeviceID
+	queryParams["accountType"] = fmt.Sprintf("%d", creds.AccountType)
+	queryParams["account"] = creds.Username
+	queryParams["codeType"] = "5"
+	queryParams["regionCode"] = "1"
+
+	if err != nil {
+		return errors.Wrap(err, "could not create request")
+	}
+	// Send and parse request
+	err = c.PostAndDecode(*u, &response, &headersMap, &queryParams, nil)
+	if err != nil {
+		return err
 	}
 	return nil
 }
