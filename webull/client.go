@@ -60,7 +60,6 @@ func NewClient(creds *Credentials) (c *Client, err error) {
 	c = &Client{
 		httpClient: &http.Client{Timeout: time.Second * 10},
 	}
-	fmt.Printf("%v", creds)
 	if creds != nil {
 		c.DeviceID = creds.DeviceID
 		c.Username = creds.Username
