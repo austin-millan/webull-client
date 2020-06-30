@@ -34,8 +34,8 @@ func TestGetAccount(t *testing.T) {
 	asrt := assert.New(t)
 	c, err := NewClient(nil)
 	err = c.Login(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		Password: os.Getenv("WEBULL_PASSWORD"),
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
 	})
 	asrt.Empty(err)
@@ -59,8 +59,8 @@ func TestGetAccountID(t *testing.T) {
 	asrt := assert.New(t)
 	c, err := NewClient(nil)
 	err = c.Login(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		Password: os.Getenv("WEBULL_PASSWORD"),
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
 	})
 	asrt.Empty(err)
