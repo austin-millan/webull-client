@@ -94,7 +94,6 @@ func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string
 		}
 	}
 	URL.RawQuery = v.Encode()
-	fmt.Printf(URL.String())
 
 	req, err := http.NewRequest(http.MethodGet, URL.String(), nil)
 	if headers != nil {
@@ -123,7 +122,6 @@ func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[strin
 		}
 	}
 	URL.RawQuery = v.Encode()
-	fmt.Printf("%s", URL.String())
 
 	req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload))
 	if headers != nil {
