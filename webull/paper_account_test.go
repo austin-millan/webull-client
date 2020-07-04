@@ -18,6 +18,7 @@ func TestGetPaperTradeAccounts(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -36,6 +37,7 @@ func TestGetPaperTradeAccountID(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)

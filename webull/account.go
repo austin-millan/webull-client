@@ -60,7 +60,7 @@ func (c *Client) GetAccount(accountID int) (*model.GetAccountResponse, error) {
 	return &response, err
 }
 
-// GetAccountV5 gets account details for account `accountID`
+// GetAccountV5 gets account details for account. Note: Doesn't work.
 func (c *Client) GetAccountV5() (*model.GetAccountsResponseV5, error) {
 	var (
 		path       = TradeEndpoint + "/v5/home"
@@ -72,7 +72,7 @@ func (c *Client) GetAccountV5() (*model.GetAccountsResponseV5, error) {
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
-	headersMap["trade_token"] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 
 	err := c.GetAndDecode(*u, &response, &headersMap, nil)
 	if err != nil {

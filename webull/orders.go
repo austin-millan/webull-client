@@ -21,6 +21,7 @@ func (c *Client) GetOrders(accountID string, status model.OrderStatus, count int
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 
 	queryParams["secAccountId"] = accountID
 	queryParams["startTime"] = "1970-0-1"
@@ -49,6 +50,7 @@ func (c *Client) IsTradeable(tickerID string) (*model.GetIsTradeableResponse, er
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 
 	err := c.GetAndDecode(*u, &response, &headersMap, &queryParams)
 	if err != nil {
@@ -72,6 +74,7 @@ func (c *Client) PlaceOrder(accountID string, input model.PostStockOrderRequest)
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 	payload, err := json.Marshal(input)
 	if err != nil {
 		return nil, err
@@ -98,6 +101,7 @@ func (c *Client) CheckOtocoOrder(accountID string, input model.PostOtocoOrderReq
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 	payload, err := json.Marshal(input)
 	if err != nil {
 		return nil, err
@@ -121,6 +125,7 @@ func (c *Client) PlaceOtocoOrder(accountID string, input model.PostOtocoOrderReq
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 	payload, err := json.Marshal(input)
 	if err != nil {
 		return nil, err
@@ -144,6 +149,7 @@ func (c *Client) CancelOrder(accountID, orderID string) (*interface{}, error) {
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 
 	err := c.PostAndDecode(*u, &response, &headersMap, nil, nil)
 	if err != nil {
@@ -167,6 +173,7 @@ func (c *Client) ModifyOrder(accountID string, orderID string, input model.PostS
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
 	headersMap[HeaderKeyDeviceID] = c.DeviceID
 	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap[HeaderKeyTradeTime] = getTimeSeconds()
 	payload, err := json.Marshal(input)
 	if err != nil {
 		return nil, err

@@ -22,6 +22,7 @@ func TestLogin(t *testing.T) {
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(c.AccessToken)
@@ -47,12 +48,15 @@ func TestTradeToken(t *testing.T) {
 		Username: os.Getenv("WEBULL_USERNAME"),
 		Password: os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
+	asrt.NoError(err)
 
 	// Finally get trake token
 	err = c.TradeLogin(Credentials{
 		Username: os.Getenv("WEBULL_USERNAME"),
 		TradePIN: os.Getenv("WEBULL_PIN"),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(c.TradeToken)

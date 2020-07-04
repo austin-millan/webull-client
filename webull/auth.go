@@ -79,6 +79,9 @@ func (c *Client) Token() (*oauth2.Token, error) {
 	}
 	tok := oauth2.Token{}
 	res, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 
@@ -293,7 +296,7 @@ func (c *Client) GetMFA(creds Credentials) (err error) {
 		return errors.Wrap(err, "could not create request")
 	}
 	// Send and parse request
-	err = c.PostAndDecode(*u, &response, &headersMap, &queryParams, nil)
+	err = c.PostAndDecode(*u, response, &headersMap, &queryParams, nil)
 	if err != nil {
 		return err
 	}

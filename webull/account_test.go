@@ -19,6 +19,7 @@ func TestGetAccounts(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	res, err := c.GetAccounts()
@@ -37,6 +38,7 @@ func TestGetAccount(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	accs, err := c.GetAccounts()
@@ -58,26 +60,24 @@ func TestGetAccountV5(t *testing.T) {
 	}
 	asrt := assert.New(t)
 	c, err := NewClient(nil)
+	asrt.Empty(err)
 	err = c.Login(Credentials{
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	err = c.TradeLogin(Credentials{
-		Username:    os.Getenv("WEBULL_USERNAME"),
-		// Password:    os.Getenv("WEBULL_PASSWORD"),
+		Username: os.Getenv("WEBULL_USERNAME"),
 		AccountType: model.AccountType(2),
-		TradePIN: os.Getenv("WEBULL_PIN"),
+		TradePIN:    os.Getenv("WEBULL_PIN"),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	accs, err := c.GetAccountV5()
 	asrt.Empty(err)
 	asrt.NotNil(accs)
-	// if len(accs.Data) < 1 {
-	// 	t.Errorf("No accounts returned")
-	// 	t.FailNow()
-	// }
 }
 
 func TestGetAccountID(t *testing.T) {
@@ -91,6 +91,7 @@ func TestGetAccountID(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	res, err := c.GetAccountID()

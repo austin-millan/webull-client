@@ -20,6 +20,7 @@ func TestPlacePaperOrder(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -39,6 +40,7 @@ func TestPlacePaperOrder(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	res, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
@@ -66,6 +68,7 @@ func TestGetPaperOrders(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -78,6 +81,7 @@ func TestGetPaperOrders(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(paperTradeOrders)
@@ -93,6 +97,7 @@ func TestCancelPaperOrder(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -112,6 +117,7 @@ func TestCancelPaperOrder(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	// Place Trade
@@ -145,6 +151,7 @@ func TestModifyPaperOrder(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -164,6 +171,7 @@ func TestModifyPaperOrder(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	// Place Trade

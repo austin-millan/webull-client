@@ -19,6 +19,7 @@ func TestGetOrders(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -40,6 +41,7 @@ func TestIsTradeable(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -58,6 +60,7 @@ func TestPlaceTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -71,6 +74,7 @@ func TestPlaceTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	res, err := c.PlaceOrder(accID, model.PostStockOrderRequest{
@@ -138,6 +142,7 @@ func TestCancelTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -151,6 +156,7 @@ func TestCancelTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	// Place Trade
@@ -184,6 +190,7 @@ func TestModifyTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -197,6 +204,7 @@ func TestModifyTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	// Place Trade
@@ -239,6 +247,7 @@ func TestCheckOtocoOrder(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -252,6 +261,7 @@ func TestCheckOtocoOrder(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
+		DeviceName: deviceName(),
 	})
 
 	input := model.PostOtocoOrderRequest{

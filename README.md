@@ -79,3 +79,7 @@ Use at your own risk.
 ## Issues / Contributions
 
 If you run into any problems feel free to create an issue on Gitlab or submit a pull request.
+
+## Repository Views
+
+[![HitCount](http://hits.dwyl.com/austin-millan/robinhood-client.svg)](http://hits.dwyl.com/austin-millan/webull-client)
