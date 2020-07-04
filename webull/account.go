@@ -59,3 +59,24 @@ func (c *Client) GetAccount(accountID int) (*model.GetAccountResponse, error) {
 	}
 	return &response, err
 }
+
+// GetAccountV5 gets account details for account `accountID`
+func (c *Client) GetAccountV5() (*model.GetAccountsResponseV5, error) {
+	var (
+		path       = TradeEndpoint + "/v5/home"
+		u, _       = url.Parse(path)
+		headersMap = make(map[string]string)
+		response   model.GetAccountsResponseV5
+	)
+
+	headersMap[HeaderKeyAccessToken] = c.AccessToken
+	headersMap[HeaderKeyDeviceID] = c.DeviceID
+	headersMap[HeaderKeyTradeToken] = c.TradeToken
+	headersMap["trade_token"] = c.TradeToken
+
+	err := c.GetAndDecode(*u, &response, &headersMap, nil)
+	if err != nil {
+		return &response, err
+	}
+	return &response, err
+}

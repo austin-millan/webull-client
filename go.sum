@@ -93,6 +93,10 @@ gitlab.com/brokerage-api/webull-openapi v0.2.1 h1:yHmDhiP7JfZV/kGLVEB5/1w8n0W1rB
 gitlab.com/brokerage-api/webull-openapi v0.2.1/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
 gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704012115-5ceeecd23400 h1:hPNwg5jjAgNslrUxP/N+g696oK9wh/7YEYZzZIZVcvQ=
 gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704012115-5ceeecd23400/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704211219-e2082581a63a h1:qYAmozhoW1hWyMEbAo6ccvNFU50PBa0yJrRtK8MGmSE=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704211219-e2082581a63a/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704213903-978c085e4723 h1:Tn1SpWPfpPfLhMhDFO+3oAqxtROZ+0rzEZCL/Ik7Kic=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704213903-978c085e4723/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/mod v0.2.0 h1:KU7oHjnv3XNWfa5COkzUifxZmxp1TyI7ImMXqFxLwvQ=

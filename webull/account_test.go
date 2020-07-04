@@ -51,6 +51,35 @@ func TestGetAccount(t *testing.T) {
 	asrt.NotNil(acc)
 }
 
+func TestGetAccountV5(t *testing.T) {
+	if os.Getenv("WEBULL_USERNAME") == "" {
+		t.Skip("No username set")
+		return
+	}
+	asrt := assert.New(t)
+	c, err := NewClient(nil)
+	err = c.Login(Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+	})
+	asrt.Empty(err)
+	err = c.TradeLogin(Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		// Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+		TradePIN: os.Getenv("WEBULL_PIN"),
+	})
+	asrt.Empty(err)
+	accs, err := c.GetAccountV5()
+	asrt.Empty(err)
+	asrt.NotNil(accs)
+	// if len(accs.Data) < 1 {
+	// 	t.Errorf("No accounts returned")
+	// 	t.FailNow()
+	// }
+}
+
 func TestGetAccountID(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")

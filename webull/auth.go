@@ -223,10 +223,11 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 	}
 
 	// Client Name
-	if creds.Password != "" {
+	if creds.TradePIN != "" {
 		// UTF-8 encoded salted password
 		hasher.Write([]byte(PasswordSalt + creds.TradePIN))
 		pwd = hex.EncodeToString(hasher.Sum(nil))
+		c.HashedPassword = pwd
 	} else {
 		if c.HashedPassword == "" {
 			return fmt.Errorf("Password has not been set")
@@ -241,7 +242,7 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 		DeviceId:    DefaultDeviceID,
 		DeviceName:  DefaultDeviceName,
 		Grade:       0.0,
-		Pwd:         pwd,
+		Pwd:         c.HashedPassword,
 		RegionId:    6,
 	}
 	request.ExtInfo.VerificationCode = creds.MFA

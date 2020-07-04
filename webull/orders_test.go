@@ -76,8 +76,8 @@ func TestPlaceTrade(t *testing.T) {
 	res, err := c.PlaceOrder(accID, model.PostStockOrderRequest{
 		Action:                    model.BUY,
 		ComboType:                 "NORMAL",
-		LmtPrice:                  4.69,
-		OrderType:                 model.MKT,
+		LmtPrice:                  0.05,
+		OrderType:                 model.LMT,
 		OutsideRegularTradingHour: true,
 		Quantity:                  1,
 		SerialId:                  c.UUID,
