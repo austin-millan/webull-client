@@ -174,7 +174,7 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		if err = json.Unmarshal(body, &anyBody); err != nil {
 			return fmt.Errorf("Unable to marshal body as interface")
 		}
-		return fmt.Errorf("Got JSON unmarshal error on body: %s", err.Error())
+		fmt.Printf("Error decoding into dest")
 	}
 	return err
 }

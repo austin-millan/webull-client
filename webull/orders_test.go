@@ -25,7 +25,7 @@ func TestGetOrders(t *testing.T) {
 	acc, err := c.GetAccountID()
 	asrt.NotEmpty(acc)
 	asrt.Empty(err)
-	orders, err := c.GetOrders(acc, model.CANCELLED, 200)
+	orders, err := c.GetOrders(acc, model.FILLED, 200)
 	asrt.Empty(err)
 	asrt.NotEmpty(orders)
 }
