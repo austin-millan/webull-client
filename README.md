@@ -82,4 +82,4 @@ If you run into any problems feel free to create an issue on Gitlab or submit a 
 
 ## Repository Views
 
-[![HitCount](http://hits.dwyl.com/austin-millan/robinhood-client.svg)](http://hits.dwyl.com/austin-millan/webull-client)
+[![HitCount](http://hits.dwyl.com/austin-millan/webull-client.svg)](http://hits.dwyl.com/austin-millan/webull-client)
