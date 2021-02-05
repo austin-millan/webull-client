@@ -40,7 +40,7 @@ func (c *Client) GetPaperTradeAccountID() (string, error) {
 	return "", err
 }
 
-// GetPaperTradeAccountID is a a helper function for getting all paper trading account IDs.
+// GetPaperTradeAccountIDs is a a helper function for getting all paper trading account IDs.
 func (c *Client) GetPaperTradeAccountIDs() ([]string, error) {
 	if res, err := c.GetPaperTradeAccounts(); err != nil {
 		return []string{}, err
@@ -55,7 +55,7 @@ func (c *Client) GetPaperTradeAccountIDs() ([]string, error) {
 	}
 }
 
-// GetPaperTradeAccounts gets information for all paper accounts.
+// ResetPaperAccount gets information for all paper accounts.
 func (c *Client) ResetPaperAccount(newBalance int32) (*model.ResetPaperAccountResponse, error) {
 	var (
 		headersMap = make(map[string]string)

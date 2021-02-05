@@ -32,6 +32,7 @@ const (
 // ErrAuthExpired signals the user must retrieve a new token
 //var ErrAuthExpired = errors.New("Authentication token expired")
 
+// AuthExpiredError returned when token needs to be refreshed
 type AuthExpiredError struct {}
 
 func (e *AuthExpiredError) Error() string {

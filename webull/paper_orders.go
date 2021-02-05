@@ -8,6 +8,8 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
+// CancelAllPaperOrders is a wrapper for cancelling a number of WORKING orders.
+// Note: no pagination so no guarantee all orders will cancel
 func (c *Client) CancelAllPaperOrders(accountID string) ([]int32, error) {
 	if paperOrders, err := c.GetPaperOrders(accountID, "", "", model.WORKING); err != nil {
 		return nil, err
