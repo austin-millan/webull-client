@@ -9,9 +9,9 @@ import (
 // GetUser gets user your details
 func (c *Client) GetUser() (*model.GetUserDetailsResponse, error) {
 	var (
-		u, _        = url.Parse(UserEndpoint + "/user")
-		response    model.GetUserDetailsResponse
-		headersMap  = make(map[string]string)
+		u, _       = url.Parse(UserEndpoint + "/user")
+		response   model.GetUserDetailsResponse
+		headersMap = make(map[string]string)
 	)
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken

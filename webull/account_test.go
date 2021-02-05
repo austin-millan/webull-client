@@ -19,7 +19,7 @@ func TestGetAccounts(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	res, err := c.GetAccounts()
@@ -38,7 +38,7 @@ func TestGetAccount(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	accs, err := c.GetAccounts()
@@ -69,10 +69,10 @@ func TestGetAccountV5(t *testing.T) {
 	})
 	asrt.Empty(err)
 	err = c.TradeLogin(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
+		Username:    os.Getenv("WEBULL_USERNAME"),
 		AccountType: model.AccountType(2),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	accs, err := c.GetAccountV5()
@@ -91,7 +91,7 @@ func TestGetAccountID(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	res, err := c.GetAccountID()

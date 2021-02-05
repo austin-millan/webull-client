@@ -40,4 +40,3 @@ func (c *Client) GetPaperTradeAccountID() (string, error) {
 	}
 	return "", err
 }
-

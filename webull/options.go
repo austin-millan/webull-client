@@ -1,7 +1,6 @@
 package webull
 
 import (
-
 	"fmt"
 	"net/url"
 

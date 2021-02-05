@@ -19,7 +19,7 @@ func TestGetOrders(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -41,7 +41,7 @@ func TestIsTradeable(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -60,7 +60,7 @@ func TestPlaceTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -74,7 +74,7 @@ func TestPlaceTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 
 	res, err := c.PlaceOrder(accID, model.PostStockOrderRequest{
@@ -142,7 +142,7 @@ func TestCancelTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -156,7 +156,7 @@ func TestCancelTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 
 	// Place Trade
@@ -190,7 +190,7 @@ func TestModifyTrade(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -204,7 +204,7 @@ func TestModifyTrade(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 
 	// Place Trade
@@ -247,7 +247,7 @@ func TestCheckOtocoOrder(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -261,44 +261,43 @@ func TestCheckOtocoOrder(t *testing.T) {
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		TradePIN:    os.Getenv("WEBULL_PIN"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 
 	input := model.PostOtocoOrderRequest{
 		NewOrders: []model.PostStockOrderRequest{
 			{
-				OrderType: model.LMT,
-				TimeInForce: model.DAY,
-				Quantity: 1,
+				OrderType:                 model.LMT,
+				TimeInForce:               model.DAY,
+				Quantity:                  1,
 				OutsideRegularTradingHour: false,
-				Action: model.BUY,
-				TickerId: 913243251,
-				LmtPrice: 40,
-				ComboType: "MASTER",
+				Action:                    model.BUY,
+				TickerId:                  913243251,
+				LmtPrice:                  40,
+				ComboType:                 "MASTER",
 			},
 			{
-				OrderType: model.STP,
-				TimeInForce: model.DAY,
-				Quantity: 1,
+				OrderType:                 model.STP,
+				TimeInForce:               model.DAY,
+				Quantity:                  1,
 				OutsideRegularTradingHour: false,
-				Action: model.SELL,
-				TickerId: 913243251,
-				LmtPrice: 30,
-				ComboType: "STOP_LOSS",
+				Action:                    model.SELL,
+				TickerId:                  913243251,
+				LmtPrice:                  30,
+				ComboType:                 "STOP_LOSS",
 			},
 			{
-				OrderType: model.LMT,
-				TimeInForce: model.DAY,
-				Quantity: 1,
+				OrderType:                 model.LMT,
+				TimeInForce:               model.DAY,
+				Quantity:                  1,
 				OutsideRegularTradingHour: false,
-				Action: model.SELL,
-				TickerId: 913243251,
-				LmtPrice: 50,
-				ComboType: "STOP_PROFIT",
+				Action:                    model.SELL,
+				TickerId:                  913243251,
+				LmtPrice:                  50,
+				ComboType:                 "STOP_PROFIT",
 			},
 		},
 	}
-
 
 	// fmt.Printf("%v", orders)
 

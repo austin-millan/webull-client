@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 	"github.com/stretchr/testify/assert"
+	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
 var testCacher = false
@@ -19,10 +19,10 @@ func TestLogin(t *testing.T) {
 	c, err := NewClient(nil)
 	asrt.Empty(err)
 	err = c.Login(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		Password: os.Getenv("WEBULL_PASSWORD"),
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(c.AccessToken)
@@ -45,17 +45,17 @@ func TestTradeToken(t *testing.T) {
 	asrt.Empty(err)
 	// Must get access token first
 	err = c.Login(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		Password: os.Getenv("WEBULL_PASSWORD"),
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.NoError(err)
 
 	// Finally get trake token
 	err = c.TradeLogin(Credentials{
-		Username: os.Getenv("WEBULL_USERNAME"),
-		TradePIN: os.Getenv("WEBULL_PIN"),
+		Username:   os.Getenv("WEBULL_USERNAME"),
+		TradePIN:   os.Getenv("WEBULL_PIN"),
 		DeviceName: deviceName(),
 	})
 	asrt.Empty(err)

@@ -3,7 +3,6 @@ package webull
 import (
 	"bytes"
 	"crypto/md5"
-	"errors"
 	"io/ioutil"
 
 	"encoding/hex"
@@ -31,7 +30,13 @@ const (
 )
 
 // ErrAuthExpired signals the user must retrieve a new token
-var ErrAuthExpired = errors.New("Authentication token expired")
+//var ErrAuthExpired = errors.New("Authentication token expired")
+
+type AuthExpiredError struct {}
+
+func (e *AuthExpiredError) Error() string {
+	return fmt.Sprint("Authentication token expired")
+}
 
 // Client is a helpful abstraction around some common metadata required for
 // API operations.
@@ -55,6 +60,7 @@ type Client struct {
 	httpClient *http.Client
 }
 
+
 // NewClient is a constructor for the Webull-Client client
 func NewClient(creds *Credentials) (c *Client, err error) {
 	c = &Client{
@@ -70,10 +76,7 @@ func NewClient(creds *Credentials) (c *Client, err error) {
 		hasher := md5.New()
 		hasher.Write([]byte(PasswordSalt + creds.Password))
 		c.HashedPassword = hex.EncodeToString(hasher.Sum(nil))
-		if err != nil {
-			return nil, fmt.Errorf("Got error: %v", err)
-		}
-		_, err := c.Token()
+		_, err = c.Token()
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +88,7 @@ func NewClient(creds *Credentials) (c *Client, err error) {
 // the provided destination interface, which must be a pointer.
 func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string]string, urlValues *map[string]string) error {
 	if time.Now().After(c.AccessTokenExpiration) {
-		return ErrAuthExpired
+		return &AuthExpiredError{}
 	}
 	v := url.Values{}
 	if urlValues != nil {
@@ -95,16 +98,18 @@ func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string
 	}
 	URL.RawQuery = v.Encode()
 
-	req, err := http.NewRequest(http.MethodGet, URL.String(), nil)
-	if headers != nil {
-		for key, val := range *headers {
-			req.Header.Add(key, val)
-		}
-	}
-	if err != nil {
+	if req, err := http.NewRequest(http.MethodGet, URL.String(), nil); err == nil {
 		return err
+	} else if req == nil {
+		return fmt.Errorf("unable to create request")
+	} else {
+		if headers != nil {
+			for key, val := range *headers {
+				req.Header.Add(key, val)
+			}
+		}
+		return c.DoAndDecode(req, dest)
 	}
-	return c.DoAndDecode(req, dest)
 }
 
 // PostAndDecode retrieves from the endpoint and unmarshals resulting json into
@@ -112,7 +117,7 @@ func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string
 func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[string]string, urlValues *map[string]string, payload []byte) error {
 	if c.AccessToken != "" {
 		if time.Now().After(c.AccessTokenExpiration) {
-			return ErrAuthExpired
+			return &AuthExpiredError{}
 		}
 	}
 	v := url.Values{}
@@ -122,17 +127,18 @@ func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[strin
 		}
 	}
 	URL.RawQuery = v.Encode()
-
-	req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload))
-	if headers != nil {
-		for key, val := range *headers {
-			req.Header.Add(key, val)
-		}
-	}
-	if err != nil {
+	if req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload)); err == nil {
 		return err
+	} else if req == nil {
+		return fmt.Errorf("unable to create request")
+	} else {
+		if headers != nil {
+			for key, val := range *headers {
+				req.Header.Add(key, val)
+			}
+		}
+		return c.DoAndDecode(req, dest)
 	}
-	return c.DoAndDecode(req, dest)
 }
 
 // DoAndDecode provides useful abstractions around common errors and decoding

@@ -1,4 +1,4 @@
-image: golang:1.11-stretch
+image: golang:1.15-stretch
 
 stages:
   - test

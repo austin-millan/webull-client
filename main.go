@@ -14,7 +14,7 @@ func main() {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client"),
+		DeviceName:  fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@gitlab.com/brokerage-api/webull-client"),
 	})
 	accID, _ := c.GetAccountID()
 	if divs, err := c.GetAccountDividends(accID); divs != nil {

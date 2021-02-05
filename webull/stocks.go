@@ -49,9 +49,9 @@ func (c *Client) GetTickerID(symbol string) (string, error) {
 // GetRealtimeStockQuote gets real-time data for ticker `tickerID`
 func (c *Client) GetRealtimeStockQuote(tickerID string) (*model.GetStockQuoteResponse, error) {
 	var (
-		u, _        = url.Parse(QuotesEndpoint + "/quote/tickerRealTimes/v5/" + tickerID)
-		response    model.GetStockQuoteResponse
-		headersMap  = make(map[string]string)
+		u, _       = url.Parse(QuotesEndpoint + "/quote/tickerRealTimes/v5/" + tickerID)
+		response   model.GetStockQuoteResponse
+		headersMap = make(map[string]string)
 	)
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -67,9 +67,9 @@ func (c *Client) GetRealtimeStockQuote(tickerID string) (*model.GetStockQuoteRes
 // GetStockFundamentals gets stock fundamentals for ticker `tickerID`
 func (c *Client) GetStockFundamentals(tickerID string) (*model.GetFundamentalsResponse, error) {
 	var (
-		u, _        = url.Parse(QuotesEndpoint + "/securities/financial/index/" + tickerID)
-		response    model.GetFundamentalsResponse
-		headersMap  = make(map[string]string)
+		u, _       = url.Parse(QuotesEndpoint + "/securities/financial/index/" + tickerID)
+		response   model.GetFundamentalsResponse
+		headersMap = make(map[string]string)
 	)
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken

@@ -18,7 +18,7 @@ func TestGetTicker(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -37,7 +37,7 @@ func TestGetTickerID(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -56,7 +56,7 @@ func TestGetRealtimeStockQuote(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -75,7 +75,7 @@ func TestGetStockFundamentals(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -94,7 +94,7 @@ func TestGetActiveGainersLosers(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
@@ -113,7 +113,7 @@ func TestGetStockAnalysis(t *testing.T) {
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
-		DeviceName: deviceName(),
+		DeviceName:  deviceName(),
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)

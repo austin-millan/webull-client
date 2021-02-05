@@ -119,7 +119,7 @@ func (c *Client) PlaceOtocoOrder(accountID string, input model.PostOtocoOrderReq
 	var (
 		u, _       = url.Parse(TradeEndpoint + "/v2/corder/stock/place/" + accountID)
 		headersMap = make(map[string]string)
-		response interface{}
+		response   interface{}
 	)
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken

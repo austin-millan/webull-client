@@ -3,6 +3,8 @@ webull-client
 .vscode/
 creds*
 
+.idea/
+
 # Binaries for programs and plugins
 *.exe
 *.dll

@@ -195,7 +195,7 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 		u, _     = url.Parse(TradeEndpoint + "/login")
 		response model.PostTradeTokenResponse
 		hasher   = md5.New()
-		pwd string
+		pwd      string
 	)
 
 	// Client ID

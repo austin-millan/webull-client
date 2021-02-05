@@ -40,7 +40,6 @@ func (c *Client) CancelPaperOrder(accountID, orderID string) (*interface{}, erro
 	var (
 		u, _       = url.Parse(PaperTradeEndpoint + "/paper/1/acc/" + accountID + "/orderop/cancel/" + orderID)
 		headersMap = make(map[string]string)
-		
 	)
 	var response interface{}
 
@@ -62,7 +61,6 @@ func (c *Client) ModifyPaperOrder(accountID string, orderID string, input model.
 		headersMap = make(map[string]string)
 	)
 	var response interface{}
-	
 
 	if input.SerialId == "" {
 		input.SerialId = c.UUID
