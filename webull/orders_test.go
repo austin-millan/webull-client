@@ -78,15 +78,15 @@ func TestPlaceTrade(t *testing.T) {
 	})
 
 	res, err := c.PlaceOrder(accID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  0.05,
-		OrderType:                 model.LMT,
-		OutsideRegularTradingHour: true,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  913243251,
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(0.05),
+		OrderType:                 model.LMT.Ptr(),
+		OutsideRegularTradingHour: Bool(true),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(913243251),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(res)
@@ -161,21 +161,21 @@ func TestCancelTrade(t *testing.T) {
 
 	// Place Trade
 	placed, err := c.PlaceOrder(accID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  4.69,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: true,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  913243251,
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(4.69),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(true),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(913243251),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	cancelled, err := c.CancelPaperOrder(accID, fmt.Sprintf("%d", placed.OrderId))
+	cancelled, err := c.CancelPaperOrder(accID, fmt.Sprintf("%d", Int32Value(placed.OrderId)))
 	asrt.Empty(err)
 	asrt.NotEmpty(cancelled)
 }
@@ -209,30 +209,30 @@ func TestModifyTrade(t *testing.T) {
 
 	// Place Trade
 	placed, err := c.PlacePaperOrder(accID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  4.69,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: true,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  913243251,
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(4.69),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(true),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(913243251),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	_, err = c.ModifyPaperOrder(accID, fmt.Sprintf("%d", placed.OrderId), model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  200,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: false,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  913243251,
-		TimeInForce:               model.DAY,
+	_, err = c.ModifyPaperOrder(accID, fmt.Sprintf("%d", Int32Value(placed.OrderId)), model.PostStockOrderRequest{
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(4.69),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(true),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(913243251),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 }
@@ -263,46 +263,45 @@ func TestCheckOtocoOrder(t *testing.T) {
 		AccountType: model.AccountType(2),
 		DeviceName:  deviceName(),
 	})
-
-	input := model.PostOtocoOrderRequest{
-		NewOrders: []model.PostStockOrderRequest{
+	model.NewPostStockOrderRequest()
+	input := model.NewPostOtocoOrderRequest()
+	input.SetNewOrders(
+		[]model.PostStockOrderRequest{
 			{
-				OrderType:                 model.LMT,
-				TimeInForce:               model.DAY,
-				Quantity:                  1,
-				OutsideRegularTradingHour: false,
-				Action:                    model.BUY,
-				TickerId:                  913243251,
-				LmtPrice:                  40,
-				ComboType:                 "MASTER",
+				Action:                    model.BUY.Ptr(),
+				ComboType:                 String("MASTER"),
+				LmtPrice:                  Float32(4.69),
+				OrderType:                 model.LMT.Ptr(),
+				OutsideRegularTradingHour: Bool(true),
+				Quantity:                  Int32(1),
+				SerialId:                  String(c.UUID),
+				TickerId:                  Int32(913243251),
+				TimeInForce:               model.DAY.Ptr(),
 			},
 			{
-				OrderType:                 model.STP,
-				TimeInForce:               model.DAY,
-				Quantity:                  1,
-				OutsideRegularTradingHour: false,
-				Action:                    model.SELL,
-				TickerId:                  913243251,
-				LmtPrice:                  30,
-				ComboType:                 "STOP_LOSS",
+				OrderType:                 model.STP.Ptr(),
+				TimeInForce:               model.DAY.Ptr(),
+				Quantity:                  Int32(1),
+				OutsideRegularTradingHour: Bool(false),
+				Action:                    model.SELL.Ptr(),
+				TickerId:                  Int32(913243251),
+				LmtPrice:                  Float32(30),
+				ComboType:                 String("STOP_LOSS"),
 			},
 			{
-				OrderType:                 model.LMT,
-				TimeInForce:               model.DAY,
-				Quantity:                  1,
-				OutsideRegularTradingHour: false,
-				Action:                    model.SELL,
-				TickerId:                  913243251,
-				LmtPrice:                  50,
-				ComboType:                 "STOP_PROFIT",
+				OrderType:                 model.LMT.Ptr(),
+				TimeInForce:               model.DAY.Ptr(),
+				Quantity:                  Int32(1),
+				OutsideRegularTradingHour: Bool(false),
+				Action:                    model.SELL.Ptr(),
+				TickerId:                  Int32(913243251),
+				LmtPrice:                  Float32(50),
+				ComboType:                 String("STOP_PROFIT"),
 			},
-		},
-	}
-
-	// fmt.Printf("%v", orders)
+		})
 
 	// Place Trade
-	placed, err := c.CheckOtocoOrder(accID, input)
+	placed, err := c.CheckOtocoOrder(accID, *input)
 	asrt.Empty(err)
 	asrt.NotEmpty(placed)
 

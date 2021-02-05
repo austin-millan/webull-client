@@ -35,8 +35,8 @@ func (c *Client) GetAccountID() (string, error) {
 	if res == nil {
 		return "", fmt.Errorf("No paper trade account found")
 	}
-	for _, acc := range *&res.Data {
-		return fmt.Sprintf("%d", acc.SecAccountId), nil
+	for _, acc := range *res.Data {
+		return fmt.Sprintf("%d", Int32Value(acc.SecAccountId)), nil
 	}
 	return "", err
 }

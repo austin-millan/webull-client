@@ -8,16 +8,39 @@ import (
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
 )
 
+func (c *Client) CancelAllPaperOrders(accountID string) ([]int32, error) {
+	if paperOrders, err := c.GetPaperOrders(accountID, "", "", model.WORKING); err != nil {
+		return nil, err
+	} else if paperOrders == nil {
+		return nil, fmt.Errorf("no orders returned")
+	} else {
+		cancelledOrders := make([]int32, 0)
+		for _, order := range *paperOrders {
+			cancellation, err := c.CancelPaperOrder(accountID, fmt.Sprintf("%d", Int32Value(order.OrderId)))
+			if err != nil {
+				fmt.Printf("TODO: fix marshalling error\n")
+				cancelledOrders = append(cancelledOrders, Int32Value(order.OrderId))
+				//return cancelledOrders, err
+			} else {
+				cancelledOrders = append(cancelledOrders, Int32Value(order.OrderId))
+			}
+			fmt.Printf("cancellation: %v", cancellation)
+		}
+		return cancelledOrders, nil
+	}
+
+}
+
 // PlacePaperOrder places paper trade
 func (c *Client) PlacePaperOrder(accountID string, input model.PostStockOrderRequest) (*model.PostPaperOrderResponse, error) {
 	var (
-		u, _       = url.Parse(PaperTradeEndpoint + "/paper/1/acc/" + accountID + "/orderop/place/" + fmt.Sprintf("%d", input.TickerId))
+		u, _       = url.Parse(PaperTradeEndpoint + "/paper/1/acc/" + accountID + "/orderop/place/" + fmt.Sprintf("%d", Int32Value(input.TickerId)))
 		headersMap = make(map[string]string)
 		response   model.PostPaperOrderResponse
 	)
 
-	if input.SerialId == "" {
-		input.SerialId = c.UUID
+	if StringValue(input.SerialId) == "" {
+		input.SerialId = String(c.UUID)
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -62,8 +85,8 @@ func (c *Client) ModifyPaperOrder(accountID string, orderID string, input model.
 	)
 	var response interface{}
 
-	if input.SerialId == "" {
-		input.SerialId = c.UUID
+	if StringValue(input.SerialId) == "" {
+		input.SerialId = String(c.UUID)
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken

@@ -44,15 +44,15 @@ func TestPlacePaperOrder(t *testing.T) {
 	})
 
 	res, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  200,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: false,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  int32(tickerIDNumber),
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(200),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(false),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(int32(tickerIDNumber)),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(res)
@@ -122,21 +122,21 @@ func TestCancelPaperOrder(t *testing.T) {
 
 	// Place Trade
 	placed, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  200,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: false,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  int32(tickerIDNumber),
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(200),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(false),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(int32(tickerIDNumber)),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	cancelled, err := c.CancelPaperOrder(paperAccID, fmt.Sprintf("%d", placed.OrderId))
+	cancelled, err := c.CancelPaperOrder(paperAccID, fmt.Sprintf("%d", Int32Value(placed.OrderId)))
 	asrt.Empty(err)
 	asrt.NotEmpty(cancelled)
 }
@@ -176,30 +176,30 @@ func TestModifyPaperOrder(t *testing.T) {
 
 	// Place Trade
 	placed, err := c.PlacePaperOrder(paperAccID, model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  200,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: false,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  int32(tickerIDNumber),
-		TimeInForce:               model.DAY,
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(200),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(false),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(int32(tickerIDNumber)),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 	asrt.NotEmpty(placed)
 
 	// Cancel Trade
-	_, err = c.ModifyPaperOrder(paperAccID, fmt.Sprintf("%d", placed.OrderId), model.PostStockOrderRequest{
-		Action:                    model.BUY,
-		ComboType:                 "NORMAL",
-		LmtPrice:                  200,
-		OrderType:                 model.MKT,
-		OutsideRegularTradingHour: false,
-		Quantity:                  1,
-		SerialId:                  c.UUID,
-		TickerId:                  int32(tickerIDNumber),
-		TimeInForce:               model.DAY,
+	_, err = c.ModifyPaperOrder(paperAccID, fmt.Sprintf("%d", Int32Value(placed.OrderId)), model.PostStockOrderRequest{
+		Action:                    model.BUY.Ptr(),
+		ComboType:                 String("NORMAL"),
+		LmtPrice:                  Float32(200),
+		OrderType:                 model.MKT.Ptr(),
+		OutsideRegularTradingHour: Bool(false),
+		Quantity:                  Int32(1),
+		SerialId:                  String(c.UUID),
+		TickerId:                  Int32(int32(tickerIDNumber)),
+		TimeInForce:               model.DAY.Ptr(),
 	})
 	asrt.Empty(err)
 }

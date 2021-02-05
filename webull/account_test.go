@@ -13,18 +13,17 @@ func TestGetAccounts(t *testing.T) {
 		t.Skip("No username set")
 		return
 	}
-	c, err := NewClient(nil)
-	asrt := assert.New(t)
-	err = c.Login(Credentials{
+	c, err := NewClient(&Credentials{
 		Username:    os.Getenv("WEBULL_USERNAME"),
 		Password:    os.Getenv("WEBULL_PASSWORD"),
 		AccountType: model.AccountType(2),
 		DeviceName:  deviceName(),
 	})
+	asrt := assert.New(t)
 	asrt.Empty(err)
 	res, err := c.GetAccounts()
 	asrt.Empty(err)
-	asrt.True(res.Success)
+	asrt.True(*res.Success)
 }
 
 func TestGetAccount(t *testing.T) {
@@ -43,12 +42,17 @@ func TestGetAccount(t *testing.T) {
 	asrt.Empty(err)
 	accs, err := c.GetAccounts()
 	asrt.Empty(err)
-	asrt.True(accs.Success)
-	if len(accs.Data) < 1 {
+	asrt.True(BoolValue(accs.Success))
+	if accs.Data == nil {
 		t.Errorf("No accounts returned")
 		t.FailNow()
 	}
-	acc, err := c.GetAccount(int(accs.Data[0].SecAccountId))
+	if len(*accs.Data) < 1 {
+		t.Errorf("No accounts returned")
+		t.FailNow()
+	}
+
+	acc, err := c.GetAccount(int(Int32Value(accs.GetData()[0].SecAccountId)))
 	asrt.Empty(err)
 	asrt.NotNil(acc)
 }

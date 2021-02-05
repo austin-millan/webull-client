@@ -26,8 +26,8 @@ func (c *Client) GetTransfers(accountID string, count uint32) (*model.Transfers,
 
 	// Login request body
 	request := model.GetTransfersRequest{
-		PageSize:     float32(count),
-		LastRecordId: "0",
+		PageSize:     Float32(float32(count)),
+		LastRecordId: String("0"),
 	}
 	requestBody, _ := json.Marshal(request)
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(requestBody))

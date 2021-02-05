@@ -62,14 +62,14 @@ func (c *Client) Token() (*oauth2.Token, error) {
 	}
 	// Login request body
 	requestBody, err := json.Marshal(model.PostLoginParametersRequest{
-		Account:     c.Username,
-		AccountType: c.AccountType,
-		DeviceId:    cliID,
-		DeviceName:  deviceName,
-		Grade:       0.0,
-		Pwd:         c.HashedPassword,
-		RegionId:    1,
-		ExtInfo:     model.PostLoginParametersRequestExtInfo{VerificationCode: c.MFA},
+		Account:     String(c.Username),
+		AccountType: &c.AccountType,
+		DeviceId:    String(cliID),
+		DeviceName:  String(deviceName),
+		Grade:       Int32(0.0),
+		Pwd:         String(c.HashedPassword),
+		RegionId:    Int32(1),
+		ExtInfo:     &model.PostLoginParametersRequestExtInfo{VerificationCode: String(c.MFA)},
 	})
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(requestBody))
 	req.Header.Add("Content-Type", "application/json")
@@ -92,7 +92,7 @@ func (c *Client) Token() (*oauth2.Token, error) {
 		if err != nil {
 			return nil, fmt.Errorf("got response %q and could not decode error body %q", res.Status, b.String())
 		}
-		return nil, fmt.Errorf(e.Msg)
+		return nil, fmt.Errorf(StringValue(e.Msg))
 	}
 
 	if err != nil {
@@ -104,12 +104,12 @@ func (c *Client) Token() (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	tok.Expiry, err = time.Parse(DefaultTokenExpiryFormat, response.TokenExpireTime)
+	tok.Expiry, err = time.Parse(DefaultTokenExpiryFormat, StringValue(response.TokenExpireTime))
 	c.AccessTokenExpiration = tok.Expiry
 	tok.TokenType = "Token"
-	tok.AccessToken, c.AccessToken = response.AccessToken, response.AccessToken
-	tok.RefreshToken, c.RefreshToken = response.RefreshToken, response.RefreshToken
-	c.UUID = response.Uuid
+	tok.AccessToken, c.AccessToken = StringValue(response.AccessToken), StringValue(response.AccessToken)
+	tok.RefreshToken, c.RefreshToken = StringValue(response.RefreshToken), StringValue(response.RefreshToken)
+	c.UUID = StringValue(response.Uuid)
 	return &tok, nil
 }
 
@@ -162,15 +162,15 @@ func (c *Client) Login(creds Credentials) (err error) {
 
 	// Login request body
 	request := model.PostLoginParametersRequest{
-		Account:     c.Username,
-		AccountType: c.AccountType,
-		DeviceId:    c.DeviceID,
-		DeviceName:  c.DeviceName,
-		Grade:       0.0,
-		Pwd:         c.HashedPassword,
-		RegionId:    1,
+		Account:     String(c.Username),
+		AccountType: &c.AccountType,
+		DeviceId:    String(c.DeviceID),
+		DeviceName:  String(c.DeviceName),
+		Grade:       Int32(0.0),
+		Pwd:         String(c.HashedPassword),
+		RegionId:    Int32(1),
 	}
-	request.ExtInfo.VerificationCode = creds.MFA
+	request.ExtInfo.VerificationCode = String(creds.MFA)
 	requestBody, _ := json.Marshal(request)
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(requestBody))
 	req.Header.Add(HeaderKeyDeviceID, c.DeviceID)
@@ -181,10 +181,10 @@ func (c *Client) Login(creds Credentials) (err error) {
 	if err != nil {
 		return err
 	}
-	c.AccessToken = response.AccessToken
-	c.AccessTokenExpiration, err = time.Parse(DefaultTokenExpiryFormat, response.TokenExpireTime)
-	c.RefreshToken = response.RefreshToken
-	c.UUID = response.Uuid
+	c.AccessToken = StringValue(response.AccessToken)
+	c.AccessTokenExpiration, err = time.Parse(DefaultTokenExpiryFormat, StringValue(response.TokenExpireTime))
+	c.RefreshToken = StringValue(response.RefreshToken)
+	c.UUID = StringValue(response.Uuid)
 	return
 }
 
@@ -240,15 +240,15 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 
 	// Login request body
 	request := model.PostLoginParametersRequest{
-		Account:     creds.Username,
-		AccountType: creds.AccountType,
-		DeviceId:    DefaultDeviceID,
-		DeviceName:  DefaultDeviceName,
-		Grade:       0.0,
-		Pwd:         c.HashedPassword,
-		RegionId:    6,
+		Account:     String(creds.Username),
+		AccountType: &creds.AccountType,
+		DeviceId:    String(DefaultDeviceID),
+		DeviceName:  String(DefaultDeviceName),
+		Grade:       Int32(0.0),
+		Pwd:         String(c.HashedPassword),
+		RegionId:    Int32(6),
 	}
-	request.ExtInfo.VerificationCode = creds.MFA
+	request.ExtInfo.VerificationCode = String(creds.MFA)
 	requestBody, _ := json.Marshal(request)
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(requestBody))
 	req.Header.Add(HeaderKeyDeviceID, c.DeviceID)
@@ -261,9 +261,9 @@ func (c *Client) TradeLogin(creds Credentials) (err error) {
 	if err != nil {
 		return err
 	}
-	if response.Success {
-		c.TradeToken = response.Data.TradeToken
-		c.TradeTokenExpiration = time.Now().Add(time.Duration(response.Data.TradeTokenExpireIn) * time.Millisecond) // Assuming ms?
+	if BoolValue(response.Success) {
+		c.TradeToken = StringValue(response.Data.TradeToken)
+		c.TradeTokenExpiration = time.Now().Add(time.Duration(Int32Value(response.Data.TradeTokenExpireIn)) * time.Millisecond) // Assuming ms?
 	}
 	return nil
 }

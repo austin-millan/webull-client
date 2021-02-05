@@ -25,10 +25,10 @@ const (
 	SecuritiesEndpoint     = "https://securitiesapi.webullbroker.com/api"
 	UserBrokerEndpoint     = "https://userapi.webullbroker.com/api"
 	PaperTradeEndpoint     = "https://act.webullbroker.com/webull-paper-center/api"
+	PaperTradeEndpointV     = "https://act.webullfintech.com/webull-paper-center/api"
 	TradeEndpoint          = "https://tradeapi.webulltrade.com/api/trade"
 	StockInfoEndpoint      = "https://infoapi.webull.com/api"
 )
-
 // ErrAuthExpired signals the user must retrieve a new token
 //var ErrAuthExpired = errors.New("Authentication token expired")
 
@@ -98,7 +98,7 @@ func (c *Client) GetAndDecode(URL url.URL, dest interface{}, headers *map[string
 	}
 	URL.RawQuery = v.Encode()
 
-	if req, err := http.NewRequest(http.MethodGet, URL.String(), nil); err == nil {
+	if req, err := http.NewRequest(http.MethodGet, URL.String(), nil); err != nil {
 		return err
 	} else if req == nil {
 		return fmt.Errorf("unable to create request")
@@ -127,7 +127,7 @@ func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[strin
 		}
 	}
 	URL.RawQuery = v.Encode()
-	if req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload)); err == nil {
+	if req, err := http.NewRequest(http.MethodPost, URL.String(), bytes.NewReader(payload)); err != nil {
 		return err
 	} else if req == nil {
 		return fmt.Errorf("unable to create request")
@@ -172,7 +172,7 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		if err = json.Unmarshal(body, &anyBody); err != nil {
 			return fmt.Errorf("Unable to marshal body as interface")
 		}
-		return fmt.Errorf(e.Msg)
+		return fmt.Errorf(StringValue(e.Msg))
 	}
 	if err = json.Unmarshal(body, &dest); err != nil {
 		// anything

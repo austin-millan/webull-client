@@ -67,8 +67,8 @@ func (c *Client) PlaceOrder(accountID string, input model.PostStockOrderRequest)
 		response   model.PostOrderResponse
 	)
 
-	if input.SerialId == "" {
-		input.SerialId = c.UUID
+	if StringValue(input.SerialId) == "" {
+		input.SerialId = String(c.UUID)
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -84,7 +84,7 @@ func (c *Client) PlaceOrder(accountID string, input model.PostStockOrderRequest)
 	if err != nil {
 		return &response, err
 	}
-	if response.OrderId == 0 {
+	if Int32Value(response.OrderId) == 0 {
 		err = fmt.Errorf("OrderId should not be 0")
 	}
 	return &response, err
@@ -166,8 +166,8 @@ func (c *Client) ModifyOrder(accountID string, orderID string, input model.PostS
 	)
 	var response interface{}
 
-	if input.SerialId == "" {
-		input.SerialId = c.UUID
+	if StringValue(input.SerialId) == "" {
+		input.SerialId = String(c.UUID)
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
