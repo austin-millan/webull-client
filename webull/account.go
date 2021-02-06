@@ -22,7 +22,6 @@ func (c *Client) GetAccounts() (*model.GetSecurityAccountsResponse, error) {
 	if err != nil {
 		return &response, err
 	}
-
 	return &response, err
 }
 

@@ -15,6 +15,10 @@ github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704213903-978c085e4723 h1:Tn1SpWPfpPfLhMhDFO+3oAqxtROZ+0rzEZCL/Ik7Kic=
 gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20200704213903-978c085e4723/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20210206023043-57dd21e925c2 h1:0bOaJDkhqL81PNI6HrmUmNBzh+9EMPnudUu/6MxrwkI=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20210206023043-57dd21e925c2/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20210206033634-2578161cb82b h1:iSzc98iSOMWZ15Ovo4mu2aJJ01fuETw8biaOB8GjnPA=
+gitlab.com/brokerage-api/webull-openapi v0.2.2-0.20210206033634-2578161cb82b/go.mod h1:otyRrPqT6EMqhFTWenWocgDQ3IknlcO5vhCphq6tBpE=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e h1:bRhVy7zSSasaqNksaRZiA5EEI+Ei4I1nO5Jh72wfHlg=
