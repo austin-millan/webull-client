@@ -37,11 +37,11 @@ func (c *Client) GetTickerID(symbol string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if len(res.GetList()) < 1 {
+	if len(res.List) < 1 {
 		return "", fmt.Errorf("No ticker found")
 	}
-	for _, symbolInfo := range res.GetList() {
-		return fmt.Sprintf("%d", Int32Value(symbolInfo.TickerId)), nil
+	for _, symbolInfo := range res.List {
+		return fmt.Sprintf("%d", symbolInfo.TickerId), nil
 	}
 	return "", nil
 }

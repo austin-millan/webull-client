@@ -35,10 +35,25 @@ func (c *Client) GetAccountID() (string, error) {
 	if res == nil {
 		return "", fmt.Errorf("No paper trade account found")
 	}
-	for _, acc := range *res.Data {
-		return fmt.Sprintf("%d", Int32Value(acc.SecAccountId)), nil
+	for _, acc := range res.Data {
+		return fmt.Sprintf("%d", acc.SecAccountId), nil
 	}
 	return "", err
+}
+
+// GetAccountID gets an account ID
+func (c *Client) GetAccountIDs() (accountIDs []string, err error) {
+	if res, err := c.GetAccounts(); err != nil {
+		return accountIDs, err
+	} else if res == nil {
+		return accountIDs, fmt.Errorf("No paper trade account found")
+	} else {
+		accountIDs = make([]string, len(res.Data))
+		for i, acc := range res.Data {
+			accountIDs[i] = fmt.Sprintf("%d", acc.SecAccountId)
+		}
+		return accountIDs, err
+	}
 }
 
 // GetAccount gets account details for account `accountID`

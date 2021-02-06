@@ -31,7 +31,7 @@ func getTimeSeconds() string {
 func deviceName() string {
 	return fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client")
 }
-
+/*
 // String returns a pointer to the string value passed in.
 func String(v string) *string {
 	return &v
@@ -39,7 +39,7 @@ func String(v string) *string {
 
 // StringValue returns the value of the string pointer passed in or
 // "" if the pointer is nil.
-func StringValue(v *string) string {
+func v *string) string {
 	if v != nil {
 		return *v
 	}
@@ -98,7 +98,7 @@ func Bool(v bool) *bool {
 
 // BoolValue returns the value of the bool pointer passed in or
 // false if the pointer is nil.
-func BoolValue(v *bool) bool {
+func v *bool) bool {
 	if v != nil {
 		return *v
 	}
@@ -393,7 +393,7 @@ func Int32(v int32) *int32 {
 
 // Int32Value returns the value of the int32 pointer passed in or
 // 0 if the pointer is nil.
-func Int32Value(v *int32) int32 {
+func v *int32) int32 {
 	if v != nil {
 		return *v
 	}
@@ -629,7 +629,7 @@ func Uint32(v uint32) *uint32 {
 
 // Uint32Value returns the value of the uint32 pointer passed in or
 // 0 if the pointer is nil.
-func Uint32Value(v *uint32) uint32 {
+func Uv *uint32) uint32 {
 	if v != nil {
 		return *v
 	}
@@ -946,3 +946,4 @@ func TimeValueMap(src map[string]*time.Time) map[string]time.Time {
 	}
 	return dst
 }
+*/

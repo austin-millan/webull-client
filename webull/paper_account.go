@@ -35,7 +35,7 @@ func (c *Client) GetPaperTradeAccountID() (string, error) {
 		return "", fmt.Errorf("No paper trade account found")
 	}
 	for _, acc := range *res {
-		return fmt.Sprintf("%d", Int32Value(acc.Id)), nil
+		return fmt.Sprintf("%d", acc.Id), nil
 	}
 	return "", err
 }
@@ -49,13 +49,14 @@ func (c *Client) GetPaperTradeAccountIDs() ([]string, error) {
 	} else {
 		accountIDs := make([]string, len(*res))
 		for i, acc := range *res {
-			accountIDs[i] = fmt.Sprintf("%d", Int32Value(acc.Id))
+			accountIDs[i] = fmt.Sprintf("%d", acc.Id)
 		}
 		return accountIDs, err
 	}
 }
 
 // ResetPaperAccount gets information for all paper accounts.
+/*
 func (c *Client) ResetPaperAccount(newBalance int32) (*model.ResetPaperAccountResponse, error) {
 	var (
 		headersMap = make(map[string]string)
@@ -75,3 +76,4 @@ func (c *Client) ResetPaperAccount(newBalance int32) (*model.ResetPaperAccountRe
 	}
 	return &response, err
 }
+*/

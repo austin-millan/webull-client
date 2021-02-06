@@ -26,7 +26,7 @@ func (c *Client) GetOrders(accountID string, status model.OrderStatus, count int
 	queryParams["secAccountId"] = accountID
 	queryParams["startTime"] = "1970-0-1"
 	queryParams["dateType"] = "ORDER"
-	queryParams["pageSize"] = "256"
+	queryParams["pageSize"] = fmt.Sprintf("%d", count)
 	queryParams["status"] = string(status)
 
 	err := c.GetAndDecode(*u, &response, &headersMap, &queryParams)
@@ -67,8 +67,8 @@ func (c *Client) PlaceOrder(accountID string, input model.PostStockOrderRequest)
 		response   model.PostOrderResponse
 	)
 
-	if StringValue(input.SerialId) == "" {
-		input.SerialId = String(c.UUID)
+	if input.SerialId == "" {
+		input.SerialId = c.UUID
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -84,7 +84,7 @@ func (c *Client) PlaceOrder(accountID string, input model.PostStockOrderRequest)
 	if err != nil {
 		return &response, err
 	}
-	if Int32Value(response.OrderId) == 0 {
+	if response.OrderId == 0 {
 		err = fmt.Errorf("OrderId should not be 0")
 	}
 	return &response, err
@@ -166,8 +166,8 @@ func (c *Client) ModifyOrder(accountID string, orderID string, input model.PostS
 	)
 	var response interface{}
 
-	if StringValue(input.SerialId) == "" {
-		input.SerialId = String(c.UUID)
+	if input.SerialId == "" {
+		input.SerialId = c.UUID
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken

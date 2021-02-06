@@ -46,6 +46,7 @@ func TestGetPaperTradeAccountID(t *testing.T) {
 	asrt.NotEmpty(paperAccID)
 }
 
+/*
 func TestResetPaperAccount(t *testing.T) {
 	if os.Getenv("WEBULL_USERNAME") == "" {
 		t.Skip("No username set")
@@ -64,3 +65,4 @@ func TestResetPaperAccount(t *testing.T) {
 	asrt.Empty(err)
 	asrt.NotEmpty(paperAccID)
 }
+*/

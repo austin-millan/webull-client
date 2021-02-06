@@ -23,7 +23,7 @@ func TestGetAccounts(t *testing.T) {
 	asrt.Empty(err)
 	res, err := c.GetAccounts()
 	asrt.Empty(err)
-	asrt.True(*res.Success)
+	asrt.True(res.Success)
 }
 
 func TestGetAccount(t *testing.T) {
@@ -42,17 +42,17 @@ func TestGetAccount(t *testing.T) {
 	asrt.Empty(err)
 	accs, err := c.GetAccounts()
 	asrt.Empty(err)
-	asrt.True(BoolValue(accs.Success))
+	asrt.True(accs.Success)
 	if accs.Data == nil {
 		t.Errorf("No accounts returned")
 		t.FailNow()
 	}
-	if len(*accs.Data) < 1 {
+	if len(accs.Data) < 1 {
 		t.Errorf("No accounts returned")
 		t.FailNow()
 	}
 
-	acc, err := c.GetAccount(int(Int32Value(accs.GetData()[0].SecAccountId)))
+	acc, err := c.GetAccount(int(accs.Data[0].SecAccountId))
 	asrt.Empty(err)
 	asrt.NotNil(acc)
 }

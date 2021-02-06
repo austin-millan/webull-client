@@ -18,31 +18,30 @@ func (c *Client) CancelAllPaperOrders(accountID string) ([]int32, error) {
 	} else {
 		cancelledOrders := make([]int32, 0)
 		for _, order := range *paperOrders {
-			cancellation, err := c.CancelPaperOrder(accountID, fmt.Sprintf("%d", Int32Value(order.OrderId)))
+			cancellation, err := c.CancelPaperOrder(accountID, fmt.Sprintf("%d", order.OrderId))
 			if err != nil {
 				fmt.Printf("TODO: fix marshalling error\n")
-				cancelledOrders = append(cancelledOrders, Int32Value(order.OrderId))
+				cancelledOrders = append(cancelledOrders, order.OrderId)
 				//return cancelledOrders, err
 			} else {
-				cancelledOrders = append(cancelledOrders, Int32Value(order.OrderId))
+				cancelledOrders = append(cancelledOrders, order.OrderId)
 			}
 			fmt.Printf("cancellation: %v", cancellation)
 		}
 		return cancelledOrders, nil
 	}
-
 }
 
 // PlacePaperOrder places paper trade
 func (c *Client) PlacePaperOrder(accountID string, input model.PostStockOrderRequest) (*model.PostPaperOrderResponse, error) {
 	var (
-		u, _       = url.Parse(PaperTradeEndpoint + "/paper/1/acc/" + accountID + "/orderop/place/" + fmt.Sprintf("%d", Int32Value(input.TickerId)))
+		u, _       = url.Parse(PaperTradeEndpoint + "/paper/1/acc/" + accountID + "/orderop/place/" + fmt.Sprintf("%d", input.TickerId))
 		headersMap = make(map[string]string)
 		response   model.PostPaperOrderResponse
 	)
 
-	if StringValue(input.SerialId) == "" {
-		input.SerialId = String(c.UUID)
+	if input.SerialId == "" {
+		input.SerialId = c.UUID
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
@@ -87,8 +86,8 @@ func (c *Client) ModifyPaperOrder(accountID string, orderID string, input model.
 	)
 	var response interface{}
 
-	if StringValue(input.SerialId) == "" {
-		input.SerialId = String(c.UUID)
+	if input.SerialId == "" {
+		input.SerialId = c.UUID
 	}
 
 	headersMap[HeaderKeyAccessToken] = c.AccessToken
