@@ -154,8 +154,8 @@ func parseAnything(data []byte) (output interface{}, err error){
 // DoAndDecode provides useful abstractions around common errors and decoding
 // issues. Ideally unmarshals into `dest`. On error, it'll use the Webull `ErrorBody` model.
 // Last fallback is a plain interface.
-func (c *Client) ConnectWebsockets() (err error) {
-	err = ws.Connect(c.DeviceID, c.AccessToken)
+func (c *Client) ConnectWebsockets(tickerIDs []string) (err error) {
+	err = ws.ConnectStreamingQuotes(c.Username, c.HashedPassword, c.DeviceID, c.AccessToken, tickerIDs)
 	return err
 }
 
