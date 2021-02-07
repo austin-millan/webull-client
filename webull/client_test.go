@@ -22,6 +22,6 @@ func TestWebsocketConnect(t *testing.T) {
 	})
 	asrt.Empty(err)
 	asrt.NotNil(c)
-	err = c.ConnectWebsockets()
+	err = c.ConnectWebsockets([]string{"913256135", "913256136"})
 	asrt.Empty(err)
 }

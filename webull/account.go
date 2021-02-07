@@ -40,7 +40,7 @@ func (c *Client) GetAccountID() (string, error) {
 	return "", err
 }
 
-// GetAccountID gets an account ID
+// GetAccountIDs gets all account IDs
 func (c *Client) GetAccountIDs() (accountIDs []string, err error) {
 	if res, err := c.GetAccounts(); err != nil {
 		return accountIDs, err
