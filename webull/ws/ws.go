@@ -28,6 +28,7 @@ func msgCallback(client MQTT.Client, msg MQTT.Message) {
 	choke <- [2]string{msg.Topic(), string(msg.Payload())}
 }
 
+// ConnectStreamingQuotes is a utility function for connecting to WS streaming API
 func ConnectStreamingQuotes(username, password, deviceID, accessToken string, tickerIDs []string) error {
 	var (
 		addr = streamingQuotesAddr

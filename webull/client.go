@@ -146,14 +146,12 @@ func (c *Client) PostAndDecode(URL url.URL, dest interface{}, headers *map[strin
 func parseAnything(data []byte) (output interface{}, err error){
 	if err = json.Unmarshal(data, &output); err != nil {
 		return nil, fmt.Errorf("Unable to marshal body as interface")
-	} else {
-		return output, nil
 	}
+	return output, nil
 }
 
-// DoAndDecode provides useful abstractions around common errors and decoding
-// issues. Ideally unmarshals into `dest`. On error, it'll use the Webull `ErrorBody` model.
-// Last fallback is a plain interface.
+// ConnectWebsockets connects to a streaming API by Webull
+// NOTE: client still unstable
 func (c *Client) ConnectWebsockets(tickerIDs []string) (err error) {
 	err = ws.ConnectStreamingQuotes(c.Username, c.HashedPassword, c.DeviceID, c.AccessToken, tickerIDs)
 	return err
@@ -163,6 +161,7 @@ func (c *Client) ConnectWebsockets(tickerIDs []string) (err error) {
 // issues. Ideally unmarshals into `dest`. On error, it'll use the Webull `ErrorBody` model.
 // Last fallback is a plain interface.
 func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
+	var anyBody interface{}
 	req.Header.Add("Content-Type", "application/json")
 	res, err := c.httpClient.Do(req)
 	if err != nil {
@@ -179,35 +178,28 @@ func (c *Client) DoAndDecode(req *http.Request, dest interface{}) (err error) {
 		err = json.Unmarshal(body, &e)
 		if err != nil {
 			// anything
-			if anyBody, err := parseAnything(body); err != nil {
+			if anyBody, err = parseAnything(body); err != nil {
 				return fmt.Errorf("Unable to marshal body as interface")
-			} else {
-				dest = anyBody
 			}
+			dest = anyBody
 			return fmt.Errorf("got response %q and could not decode error body %q", res.Status, b.String())
 		}
 		// anything
-		if anyBody, err := parseAnything(body); err != nil {
+		if anyBody, err = parseAnything(body); err != nil {
 			return fmt.Errorf("Unable to marshal body as interface")
-		} else {
-			dest = anyBody
 		}
+		dest = anyBody
 		return fmt.Errorf(e.Msg)
 	}
 	if err = json.Unmarshal(body, &dest); err != nil {
 		// anything
-		if anyBody, err := parseAnything(body); err != nil {
+		if anyBody, err = parseAnything(body); err != nil {
 			return fmt.Errorf("Unable to marshal body as interface")
-		} else {
-			_ = anyBody
 		}
 	}
-	// anything
-	if anyBody, err := parseAnything(body); err != nil {
-		return fmt.Errorf("Unable to marshal body as interface")
-	} else {
-		_ = anyBody
-		//dest = anyBody
-	}
+	// anything: uncomment for viewing raw response
+	//if anyBody, err := parseAnything(body); err != nil {
+	//	return fmt.Errorf("Unable to marshal body as interface")
+	//}
 	return err
 }
