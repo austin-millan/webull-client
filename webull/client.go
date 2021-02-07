@@ -155,7 +155,8 @@ func parseAnything(data []byte) (output interface{}, err error){
 // issues. Ideally unmarshals into `dest`. On error, it'll use the Webull `ErrorBody` model.
 // Last fallback is a plain interface.
 func (c *Client) ConnectWebsockets() (err error) {
-	err = ws.Connect(c.DeviceID, c.AccessToken)
+	tickerIDs := []int{913256135, 913256136}
+	err = ws.ConnectStreamingQuotes(c.Username, c.HashedPassword, c.DeviceID, c.AccessToken, tickerIDs)
 	return err
 }
 
