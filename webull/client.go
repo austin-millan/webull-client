@@ -2,6 +2,7 @@ package webull
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"io/ioutil"
 
@@ -14,7 +15,6 @@ import (
 	"time"
 
 	model "gitlab.com/brokerage-api/webull-openapi/openapi"
-	ws "gitlab.com/brokerage-api/webull-client/webull/ws"
 )
 
 // Endpoints for the Webull API
@@ -35,6 +35,8 @@ const (
 
 // AuthExpiredError returned when token needs to be refreshed
 type AuthExpiredError struct {}
+
+type userCallback func(context.Context, Topic, interface{}) error
 
 func (e *AuthExpiredError) Error() string {
 	return fmt.Sprint("Authentication token expired")
@@ -60,6 +62,7 @@ type Client struct {
 	DeviceID string
 
 	httpClient *http.Client
+	WebsocketCallbacks map[string]userCallback
 }
 
 
@@ -84,6 +87,35 @@ func NewClient(creds *Credentials) (c *Client, err error) {
 		}
 	}
 	return
+}
+
+// RegisterCallback registers a callback, overriding an existing callback if one exists
+func (c *Client) RegisterCallback(override bool, callback func(context.Context, Topic, interface{}) error, topic ...string) error {
+	if c.WebsocketCallbacks == nil {
+		c.WebsocketCallbacks = make(map[string]userCallback, 0)
+	}
+	for _, t := range topic {
+		if _, ok := c.WebsocketCallbacks[t]; ok {
+			if !override {
+				return fmt.Errorf("callback already exists")
+			}
+		}
+		c.WebsocketCallbacks[t] = callback
+	}
+	return nil
+}
+
+// RegisterCallback registers a callback
+func (c *Client) DeregisterCallback(topic string) error {
+	if c.WebsocketCallbacks == nil {
+		c.WebsocketCallbacks = make(map[string]userCallback, 0)
+	}
+	if _, ok := c.WebsocketCallbacks[topic]; ok {
+		delete(c.WebsocketCallbacks, topic)
+	} else {
+		return fmt.Errorf("callback does not exist")
+	}
+	return nil
 }
 
 // GetAndDecode retrieves from the endpoint and unmarshals resulting json into
@@ -152,8 +184,8 @@ func parseAnything(data []byte) (output interface{}, err error){
 
 // ConnectWebsockets connects to a streaming API by Webull
 // NOTE: client still unstable
-func (c *Client) ConnectWebsockets(tickerIDs []string) (err error) {
-	err = ws.ConnectStreamingQuotes(c.Username, c.HashedPassword, c.DeviceID, c.AccessToken, tickerIDs)
+func (c *Client) ConnectWebsockets(ctx context.Context, messageTypes []string, tickerIDs []string) (err error) {
+	err = c.ConnectStreamingQuotes(ctx, c.Username, c.HashedPassword, c.DeviceID, c.AccessToken, messageTypes, tickerIDs)
 	return err
 }
 
