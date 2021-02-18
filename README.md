@@ -20,7 +20,7 @@ export WEBULL_PASSWORD='SuperStrongPasswerrrdd12345'
 export WEBULL_PIN='123456'
 ```
 
-Webull requires a MFA email when authenticating new devices.
+Webull requires an MFA email when authenticating new devices.
 
 Once your device has been authorized, you should be able to see device name in your Webull app under "Settings" -> "Two-Factor Authentication".
 
@@ -31,39 +31,87 @@ or using the `NewClient` constructor:
 package main
 
 import (
-    "os"
-    "fmt"
-    model "gitlab.com/brokerage-api/webull-openapi/openapi"
-    webull "gitlab.com/brokerage-api/webull-client/webull"
+	"fmt"
+	webull "gitlab.com/brokerage-api/webull-client/webull"
+	model "gitlab.com/brokerage-api/webull-openapi/openapi"
+	"os"
 )
 
 func main() {
-    // Authenticate your device
-    creds := webull.Credentials{
-        Username:    os.Getenv("WEBULL_USERNAME"),
-        Password:    os.Getenv("WEBULL_PASSWORD"),
-        AccountType: model.AccountType(2),
-        DeviceName:  fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client"),
-    }
-    if c, err := webull.NewClient(&creds); err != nil {
-    	panic(err)
-    } else if c == nil {
-    	panic("no client returned")
-    } else {
-        if err = c.GetMFA(creds); err != nil {
-            panic(err)
-        }
-        if acc, err := c.GetAccountID(); err != nil {
-            panic(err)
-        } else {
-            res, _ := c.GetAccountDividends(acc)
-            fmt.Printf("Dividends: %v", res)	
-        }
-    }
+	// Authenticate your device
+	creds := webull.Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+		DeviceName:  fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client"),
+	}
+	if c, err := webull.NewClient(&creds); err != nil {
+		panic(err)
+	} else if c == nil {
+		panic("no client returned")
+	} else {
+		if err = c.GetMFA(creds); err != nil {
+			panic(err)
+		}
+		if acc, err := c.GetAccountID(); err != nil {
+			panic(err)
+		} else {
+			res, _ := c.GetAccountDividends(acc)
+			fmt.Printf("Dividends: %v", res)
+		}
+	}
 }
-
 ```
 
+### MQTT Connection (Quotes Streaming)
+
+You can connect and stream various data using [MQTT](https://en.wikipedia.org/wiki/MQTT).
+
+This example will process (I think all) streamable data for a particular ticker for 90 seconds.
+Note: not tested for concurrency.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	webull "gitlab.com/brokerage-api/webull-client/webull"
+	model "gitlab.com/brokerage-api/webull-openapi/openapi"
+	"os"
+	"time"
+)
+
+func main() {
+	// Authenticate your device
+	creds := webull.Credentials{
+		Username:    os.Getenv("WEBULL_USERNAME"),
+		Password:    os.Getenv("WEBULL_PASSWORD"),
+		AccountType: model.AccountType(2),
+		DeviceName:  fmt.Sprintf(os.Getenv("WEBULL_USERNAME") + "@go-client"),
+	}
+	if c, err := webull.NewClient(&creds); err != nil {
+		panic(err)
+	} else if c == nil {
+		panic("no client returned")
+	} else {
+		var (
+			tickerID = "913256135"
+			msgTypes = []string{"101", "102", "103", "104", "105", "106", "107", "108"}
+		)
+		yourCallback := func(ctx context.Context, topic webull.Topic, msg interface{}) error {
+			fmt.Printf("TOPIC: %v\nMESSAGE: %v", topic, msg)
+			return nil
+		}
+		c.RegisterCallback(false, yourCallback, "101")
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*90)
+		defer cancel()
+		if err = c.ConnectWebsockets(ctx, msgTypes, []string{tickerID}); err != nil {
+			panic(err)
+		}
+	}
+}
+```
 
 ## Disclaimer
 
