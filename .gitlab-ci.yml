@@ -9,5 +9,4 @@ lint:
     - go get golang.org/x/lint/golint
     - go mod download
   script:
-    - go build
     - golint -set_exit_status ./...

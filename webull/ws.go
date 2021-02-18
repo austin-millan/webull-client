@@ -72,6 +72,7 @@ func pushChannel(client MQTT.Client, msg MQTT.Message) {
 	bufferedMessages <- outMsg
 }
 
+// Topic should be used in tandem with *Message structs in user defined callbacks
 type Topic struct {
 	Type     int      `json:"type"`
 	TickerID int      `json:"tickerId"`
@@ -79,6 +80,7 @@ type Topic struct {
 	Flag     string   `json:"flag"`
 }
 
+// Type101Message is a message type returned from Webull MQTT quote streams
 type Type101Message struct {
 	TransID     int    `json:"transId"`
 	Change      string `json:"change"`
@@ -93,6 +95,7 @@ type Type101Message struct {
 	Status      string `json:"status"`
 }
 
+// Type102Message is a message type returned from Webull MQTT quote streams
 type Type102Message struct {
 	TransID        int    `json:"transId"`
 	High           string `json:"high"`
@@ -115,6 +118,7 @@ type Type102Message struct {
 	Status         string `json:"status"`
 }
 
+// Type103Message is a message type returned from Webull MQTT quote streams
 type Type103Message struct {
 	Deal struct {
 		TrdBs     string `json:"trdBs"`
@@ -131,6 +135,7 @@ type Type103Message struct {
 	Status     string `json:"status"`
 }
 
+// Type104Message is a message type returned from Webull MQTT quote streams
 type Type104Message struct {
 	TransID int `json:"transId"`
 	BidList []struct {
@@ -148,6 +153,7 @@ type Type104Message struct {
 	Status   string `json:"status"`
 }
 
+// Type105Message is a message type returned from Webull MQTT quote streams
 type Type105Message struct {
 	Deal struct {
 		TrdBs     string `json:"trdBs"`
@@ -176,6 +182,7 @@ type Type105Message struct {
 	Status         string `json:"status"`
 }
 
+// Type106Message is a message type returned from Webull MQTT quote streams
 type Type106Message struct {
 	Depth struct {
 		NtvAggAskList []struct {
@@ -193,6 +200,7 @@ type Type106Message struct {
 	Status   string `json:"status"`
 }
 
+// Type107Message is a message type returned from Webull MQTT quote streams
 type Type107Message struct {
 	Deal struct {
 		TrdBs     string `json:"trdBs"`
@@ -221,6 +229,7 @@ type Type107Message struct {
 	Status         string `json:"status"`
 }
 
+// Type108Message is a message type returned from Webull MQTT quote streams
 type Type108Message struct {
 	Deal struct {
 		TrdBs     string `json:"trdBs"`

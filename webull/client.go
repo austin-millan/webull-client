@@ -105,7 +105,7 @@ func (c *Client) RegisterCallback(override bool, callback func(context.Context, 
 	return nil
 }
 
-// RegisterCallback registers a callback
+// DeregisterCallback de-registers (unsets) a callback for a particular topic number
 func (c *Client) DeregisterCallback(topic string) error {
 	if c.WebsocketCallbacks == nil {
 		c.WebsocketCallbacks = make(map[string]userCallback, 0)
