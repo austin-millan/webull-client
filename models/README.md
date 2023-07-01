@@ -15,15 +15,60 @@ Install the following dependencies:
 
 ```shell
 go get github.com/stretchr/testify/assert
-go get golang.org/x/oauth2
 go get golang.org/x/net/context
-go get github.com/antihax/optional
 ```
 
 Put the package under your project folder and add the following in import:
 
 ```golang
-import "./openapi"
+import openapi "github.com/GIT_USER_ID/GIT_REPO_ID"
+```
+
+To use a proxy, set the environment variable `HTTP_PROXY`:
+
+```golang
+os.Setenv("HTTP_PROXY", "http://proxy_name:proxy_port")
+```
+
+## Configuration of Server URL
+
+Default configuration comes with `Servers` field that contains server objects as defined in the OpenAPI specification.
+
+### Select Server Configuration
+
+For using other server than the one defined on index 0 set context value `sw.ContextServerIndex` of type `int`.
+
+```golang
+ctx := context.WithValue(context.Background(), openapi.ContextServerIndex, 1)
+```
+
+### Templated Server URL
+
+Templated server URL is formatted using default variables from configuration or from context value `sw.ContextServerVariables` of type `map[string]string`.
+
+```golang
+ctx := context.WithValue(context.Background(), openapi.ContextServerVariables, map[string]string{
+	"basePath": "v2",
+})
+```
+
+Note, enum values are always validated and all unused variables are silently ignored.
+
+### URLs Configuration per Operation
+
+Each operation can use different server URL defined using `OperationServers` map in the `Configuration`.
+An operation is uniquely identified by `"{classname}Service.{nickname}"` string.
+Similar rules for overriding default operation server index and variables applies by using `sw.ContextOperationServerIndices` and `sw.ContextOperationServerVariables` context maps.
+
+```golang
+ctx := context.WithValue(context.Background(), openapi.ContextOperationServerIndices, map[string]int{
+	"{classname}Service.{nickname}": 2,
+})
+ctx = context.WithValue(context.Background(), openapi.ContextOperationServerVariables, map[string]map[string]string{
+	"{classname}Service.{nickname}": {
+		"port": "8443",
+	},
+})
 ```
 
 ## Documentation for API Endpoints
@@ -32,43 +77,43 @@ All URIs are relative to *https://quoteapi.webull.com/api*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*AccountsApi* | [**GetAccount**](docs/AccountsApi.md#getaccount) | **Get** /account/getSecAccountList/v4 | getAccount
-*AccountsApi* | [**GetAccountInfo**](docs/AccountsApi.md#getaccountinfo) | **Get** /v2/home/{account_id} | getAccountInfo
-*AccountsApi* | [**GetAccountInfoV5**](docs/AccountsApi.md#getaccountinfov5) | **Get** /v5/home/ | getAccountInfo
-*AccountsApi* | [**GetTransferHistory**](docs/AccountsApi.md#gettransferhistory) | **Post** /asset/{account_id}/getWebullTransferList | getTransferHistory
-*AlertsApi* | [**GetAlerts**](docs/AlertsApi.md#getalerts) | **Get** /user/warning/v2/query/tickers | getAlerts
-*AuthenticationApi* | [**GetMultiFactorAuth**](docs/AuthenticationApi.md#getmultifactorauth) | **Post** /passport/verificationCode/sendCode | getMultiFactorAuth
-*AuthenticationApi* | [**GetTradeToken**](docs/AuthenticationApi.md#gettradetoken) | **Post** /login | getTradeToken
-*AuthenticationApi* | [**Login**](docs/AuthenticationApi.md#login) | **Post** /passport/login/v3/account | login
-*AuthenticationApi* | [**Logout**](docs/AuthenticationApi.md#logout) | **Get** /passport/login/logout | logout
-*AuthenticationApi* | [**RefreshToken**](docs/AuthenticationApi.md#refreshtoken) | **Post** /passport/refreshToken | refreshToken
-*DividendsApi* | [**GetDividends**](docs/DividendsApi.md#getdividends) | **Get** /v2/account/{account_id}/dividends | getDividends
-*OptionsApi* | [**GetOptionQuotes**](docs/OptionsApi.md#getoptionquotes) | **Get** /quote/option/query/list | getOptionQuotes
-*OptionsApi* | [**GetStockOptions**](docs/OptionsApi.md#getstockoptions) | **Get** /quote/option/{stock}/list | getStockOptions
-*OptionsApi* | [**PlaceOptionOrder**](docs/OptionsApi.md#placeoptionorder) | **Post** /v2/option/placeOrder/{account_id} | placeOptionOrder
-*OptionsApi* | [**ReplaceOptionOrder**](docs/OptionsApi.md#replaceoptionorder) | **Post** /v2/option/replaceOrder/{account_id} | replaceOptionOrder
-*OrderApi* | [**CancelOrder**](docs/OrderApi.md#cancelorder) | **Post** /order/{account_id}/cancelStockOrder/ | cancelOrder
-*OrderApi* | [**CancelOtocoOrder**](docs/OrderApi.md#cancelotocoorder) | **Post** /v2/corder/stock/modify/{account_id} | cancelOtocoOrder
-*OrderApi* | [**CheckOtocoOrder**](docs/OrderApi.md#checkotocoorder) | **Post** /v2/corder/stock/check/{account_id} | checkOtocoOrder
-*OrderApi* | [**GetOrders**](docs/OrderApi.md#getorders) | **Get** /v2/option/list | getOrders
-*OrderApi* | [**IsTradeable**](docs/OrderApi.md#istradeable) | **Get** /ticker/broker/permissionV2 | isTradeable
-*OrderApi* | [**ModifyOrder**](docs/OrderApi.md#modifyorder) | **Post** /order/{account_id}/modifyStockOrder/{order_id} | modifyOrder
-*OrderApi* | [**PlaceOrder**](docs/OrderApi.md#placeorder) | **Post** /order/{account_id}/placeStockOrder | placeOrder
-*OrderApi* | [**PlaceOtocoOrder**](docs/OrderApi.md#placeotocoorder) | **Post** /v2/corder/stock/place/{account_id} | placeOtocoOrder
-*PaperApi* | [**CancelPaperTradeOrder**](docs/PaperApi.md#cancelpapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/cancel/{order_id} | cancelPaperTradeOrder
-*PaperApi* | [**GetPaperOrders**](docs/PaperApi.md#getpaperorders) | **Get** /paper/1/acc/{paper_account_id}/order | getPaperOrders
-*PaperApi* | [**GetPaperTradingAccountID**](docs/PaperApi.md#getpapertradingaccountid) | **Get** /myaccounts/true | getPaperTradingAccountID
-*PaperApi* | [**ModifyPaperTradeOrder**](docs/PaperApi.md#modifypapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/modify/{order_id} | modifyPaperTradeOrder
-*PaperApi* | [**PlacePaperTradeOrder**](docs/PaperApi.md#placepapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/place/{stock} | placePaperTradeOrder
-*QuoteApi* | [**GetStockQuote**](docs/QuoteApi.md#getstockquote) | **Get** /quote/tickerRealTimes/v5/{stock} | getStockQuote
-*StocksApi* | [**GetActiveGainersLosers**](docs/StocksApi.md#getactivegainerslosers) | **Get** /securities/market/v5/card/stockActivityPc.{direction}/list | getActiveGainersLosers
-*StocksApi* | [**GetFundamentals**](docs/StocksApi.md#getfundamentals) | **Get** /securities/financial/index/{stock} | getFundamentals
-*StocksApi* | [**GetStockAnalysis**](docs/StocksApi.md#getstockanalysis) | **Get** /securities/ticker/v5/analysis/{stock} | getStockAnalysis
-*StocksApi* | [**GetStockId**](docs/StocksApi.md#getstockid) | **Get** /search/tickers5 | getStockID
-*StocksApi* | [**GetStockNews**](docs/StocksApi.md#getstocknews) | **Get** /information/news/v5/tickerNews/{stock} | getStockNews
-*StocksApi* | [**GetTickerChart**](docs/StocksApi.md#gettickerchart) | **Get** /quote/tickerChartDatas/v5/{stock} | getTickerChart
-*StocksApi* | [**Screener**](docs/StocksApi.md#screener) | **Get** /wlas/screener/ng/query | screener
-*UserApi* | [**GetUser**](docs/UserApi.md#getuser) | **Get** /user | getUser
+*AccountsAPI* | [**GetAccount**](docs/AccountsAPI.md#getaccount) | **Get** /account/getSecAccountList/v4 | getAccount
+*AccountsAPI* | [**GetAccountInfo**](docs/AccountsAPI.md#getaccountinfo) | **Get** /v2/home/{account_id} | getAccountInfo
+*AccountsAPI* | [**GetAccountInfoV5**](docs/AccountsAPI.md#getaccountinfov5) | **Get** /v5/home/ | getAccountInfo
+*AccountsAPI* | [**GetTransferHistory**](docs/AccountsAPI.md#gettransferhistory) | **Post** /asset/{account_id}/getWebullTransferList | getTransferHistory
+*AlertsAPI* | [**GetAlerts**](docs/AlertsAPI.md#getalerts) | **Get** /user/warning/v2/query/tickers | getAlerts
+*AuthenticationAPI* | [**GetMultiFactorAuth**](docs/AuthenticationAPI.md#getmultifactorauth) | **Post** /passport/verificationCode/sendCode | getMultiFactorAuth
+*AuthenticationAPI* | [**GetTradeToken**](docs/AuthenticationAPI.md#gettradetoken) | **Post** /login | getTradeToken
+*AuthenticationAPI* | [**Login**](docs/AuthenticationAPI.md#login) | **Post** /passport/login/v3/account | login
+*AuthenticationAPI* | [**Logout**](docs/AuthenticationAPI.md#logout) | **Get** /passport/login/logout | logout
+*AuthenticationAPI* | [**RefreshToken**](docs/AuthenticationAPI.md#refreshtoken) | **Post** /passport/refreshToken | refreshToken
+*DividendsAPI* | [**GetDividends**](docs/DividendsAPI.md#getdividends) | **Get** /v2/account/{account_id}/dividends | getDividends
+*OptionsAPI* | [**GetOptionQuotes**](docs/OptionsAPI.md#getoptionquotes) | **Get** /quote/option/query/list | getOptionQuotes
+*OptionsAPI* | [**GetStockOptions**](docs/OptionsAPI.md#getstockoptions) | **Get** /quote/option/{stock}/list | getStockOptions
+*OptionsAPI* | [**PlaceOptionOrder**](docs/OptionsAPI.md#placeoptionorder) | **Post** /v2/option/placeOrder/{account_id} | placeOptionOrder
+*OptionsAPI* | [**ReplaceOptionOrder**](docs/OptionsAPI.md#replaceoptionorder) | **Post** /v2/option/replaceOrder/{account_id} | replaceOptionOrder
+*OrderAPI* | [**CancelOrder**](docs/OrderAPI.md#cancelorder) | **Post** /order/{account_id}/cancelStockOrder/ | cancelOrder
+*OrderAPI* | [**CancelOtocoOrder**](docs/OrderAPI.md#cancelotocoorder) | **Post** /v2/corder/stock/modify/{account_id} | cancelOtocoOrder
+*OrderAPI* | [**CheckOtocoOrder**](docs/OrderAPI.md#checkotocoorder) | **Post** /v2/corder/stock/check/{account_id} | checkOtocoOrder
+*OrderAPI* | [**GetOrders**](docs/OrderAPI.md#getorders) | **Get** /v2/option/list | getOrders
+*OrderAPI* | [**IsTradeable**](docs/OrderAPI.md#istradeable) | **Get** /ticker/broker/permissionV2 | isTradeable
+*OrderAPI* | [**ModifyOrder**](docs/OrderAPI.md#modifyorder) | **Post** /order/{account_id}/modifyStockOrder/{order_id} | modifyOrder
+*OrderAPI* | [**PlaceOrder**](docs/OrderAPI.md#placeorder) | **Post** /order/{account_id}/placeStockOrder | placeOrder
+*OrderAPI* | [**PlaceOtocoOrder**](docs/OrderAPI.md#placeotocoorder) | **Post** /v2/corder/stock/place/{account_id} | placeOtocoOrder
+*PaperAPI* | [**CancelPaperTradeOrder**](docs/PaperAPI.md#cancelpapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/cancel/{order_id} | cancelPaperTradeOrder
+*PaperAPI* | [**GetPaperOrders**](docs/PaperAPI.md#getpaperorders) | **Get** /paper/1/acc/{paper_account_id}/order | getPaperOrders
+*PaperAPI* | [**GetPaperTradingAccountID**](docs/PaperAPI.md#getpapertradingaccountid) | **Get** /myaccounts/true | getPaperTradingAccountID
+*PaperAPI* | [**ModifyPaperTradeOrder**](docs/PaperAPI.md#modifypapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/modify/{order_id} | modifyPaperTradeOrder
+*PaperAPI* | [**PlacePaperTradeOrder**](docs/PaperAPI.md#placepapertradeorder) | **Post** /paper/1/acc/{paper_account_id}/orderop/place/{stock} | placePaperTradeOrder
+*QuoteAPI* | [**GetStockQuote**](docs/QuoteAPI.md#getstockquote) | **Get** /quote/tickerRealTimes/v5/{stock} | getStockQuote
+*StocksAPI* | [**GetActiveGainersLosers**](docs/StocksAPI.md#getactivegainerslosers) | **Get** /securities/market/v5/card/stockActivityPc.{direction}/list | getActiveGainersLosers
+*StocksAPI* | [**GetFundamentals**](docs/StocksAPI.md#getfundamentals) | **Get** /securities/financial/index/{stock} | getFundamentals
+*StocksAPI* | [**GetStockAnalysis**](docs/StocksAPI.md#getstockanalysis) | **Get** /securities/ticker/v5/analysis/{stock} | getStockAnalysis
+*StocksAPI* | [**GetStockId**](docs/StocksAPI.md#getstockid) | **Get** /search/tickers5 | getStockID
+*StocksAPI* | [**GetStockNews**](docs/StocksAPI.md#getstocknews) | **Get** /information/news/v5/tickerNews/{stock} | getStockNews
+*StocksAPI* | [**GetTickerChart**](docs/StocksAPI.md#gettickerchart) | **Get** /quote/tickerChartDatas/v5/{stock} | getTickerChart
+*StocksAPI* | [**Screener**](docs/StocksAPI.md#screener) | **Get** /wlas/screener/ng/query | screener
+*UserAPI* | [**GetUser**](docs/UserAPI.md#getuser) | **Get** /user | getUser
 
 
 ## Documentation For Models
@@ -83,77 +128,76 @@ Class | Method | HTTP request | Description
  - [Alert](docs/Alert.md)
  - [AlertEventWarning](docs/AlertEventWarning.md)
  - [AlertTickerWarning](docs/AlertTickerWarning.md)
- - [Attach](docs/Attach.md)
  - [Auth](docs/Auth.md)
+ - [CancelOtocoOrderRequest](docs/CancelOtocoOrderRequest.md)
  - [Direction](docs/Direction.md)
  - [ErrorBody](docs/ErrorBody.md)
  - [Execution](docs/Execution.md)
  - [ExecutionType](docs/ExecutionType.md)
  - [GetAcccountRequest](docs/GetAcccountRequest.md)
- - [GetAcccountRequestAccountMembers](docs/GetAcccountRequestAccountMembers.md)
- - [GetAcccountRequestBanners](docs/GetAcccountRequestBanners.md)
- - [GetAcccountRequestPositions](docs/GetAcccountRequestPositions.md)
- - [GetAcccountRequestTicker](docs/GetAcccountRequestTicker.md)
+ - [GetAcccountRequestAccountMembersInner](docs/GetAcccountRequestAccountMembersInner.md)
+ - [GetAcccountRequestBannersInner](docs/GetAcccountRequestBannersInner.md)
+ - [GetAcccountRequestPositionsInner](docs/GetAcccountRequestPositionsInner.md)
+ - [GetAcccountRequestPositionsInnerTicker](docs/GetAcccountRequestPositionsInnerTicker.md)
  - [GetAccountResponse](docs/GetAccountResponse.md)
- - [GetAccountResponsePositions](docs/GetAccountResponsePositions.md)
+ - [GetAccountResponsePositionsInner](docs/GetAccountResponsePositionsInner.md)
  - [GetAccountsResponseV5](docs/GetAccountsResponseV5.md)
- - [GetAccountsResponseV5AccountMembers](docs/GetAccountsResponseV5AccountMembers.md)
- - [GetAccountsResponseV5Accounts](docs/GetAccountsResponseV5Accounts.md)
- - [GetAccountsResponseV5Positions](docs/GetAccountsResponseV5Positions.md)
- - [GetAccountsResponseV5Positions2](docs/GetAccountsResponseV5Positions2.md)
- - [GetAccountsResponseV5Ticker](docs/GetAccountsResponseV5Ticker.md)
+ - [GetAccountsResponseV5AccountsInner](docs/GetAccountsResponseV5AccountsInner.md)
+ - [GetAccountsResponseV5AccountsInnerAccountMembersInner](docs/GetAccountsResponseV5AccountsInnerAccountMembersInner.md)
+ - [GetAccountsResponseV5Positions2Inner](docs/GetAccountsResponseV5Positions2Inner.md)
+ - [GetAccountsResponseV5Positions2InnerPositionsInner](docs/GetAccountsResponseV5Positions2InnerPositionsInner.md)
+ - [GetAccountsResponseV5Positions2InnerPositionsInnerTicker](docs/GetAccountsResponseV5Positions2InnerPositionsInnerTicker.md)
  - [GetAlertsResponse](docs/GetAlertsResponse.md)
- - [GetAlertsResponseData](docs/GetAlertsResponseData.md)
- - [GetAlertsResponseEventWarning](docs/GetAlertsResponseEventWarning.md)
- - [GetAlertsResponseEventWarningRules](docs/GetAlertsResponseEventWarningRules.md)
- - [GetAlertsResponseTickerWarning](docs/GetAlertsResponseTickerWarning.md)
- - [GetAlertsResponseTickerWarningRules](docs/GetAlertsResponseTickerWarningRules.md)
+ - [GetAlertsResponseDataInner](docs/GetAlertsResponseDataInner.md)
+ - [GetAlertsResponseDataInnerEventWarning](docs/GetAlertsResponseDataInnerEventWarning.md)
+ - [GetAlertsResponseDataInnerEventWarningRulesInner](docs/GetAlertsResponseDataInnerEventWarningRulesInner.md)
+ - [GetAlertsResponseDataInnerTickerWarning](docs/GetAlertsResponseDataInnerTickerWarning.md)
+ - [GetAlertsResponseDataInnerTickerWarningRulesInner](docs/GetAlertsResponseDataInnerTickerWarningRulesInner.md)
  - [GetDividendsResponse](docs/GetDividendsResponse.md)
  - [GetFundamentalsResponse](docs/GetFundamentalsResponse.md)
  - [GetFundamentalsResponseAnalysis](docs/GetFundamentalsResponseAnalysis.md)
- - [GetFundamentalsResponseAnalysisDatas](docs/GetFundamentalsResponseAnalysisDatas.md)
- - [GetFundamentalsResponseData](docs/GetFundamentalsResponseData.md)
- - [GetFundamentalsResponseDataPoints](docs/GetFundamentalsResponseDataPoints.md)
- - [GetFundamentalsResponseForecast](docs/GetFundamentalsResponseForecast.md)
- - [GetFundamentalsResponseLabels](docs/GetFundamentalsResponseLabels.md)
- - [GetFundamentalsResponseList](docs/GetFundamentalsResponseList.md)
+ - [GetFundamentalsResponseAnalysisDatasInner](docs/GetFundamentalsResponseAnalysisDatasInner.md)
+ - [GetFundamentalsResponseForecastInner](docs/GetFundamentalsResponseForecastInner.md)
+ - [GetFundamentalsResponseForecastInnerData](docs/GetFundamentalsResponseForecastInnerData.md)
+ - [GetFundamentalsResponseForecastInnerDataPointsInner](docs/GetFundamentalsResponseForecastInnerDataPointsInner.md)
  - [GetFundamentalsResponseRemind](docs/GetFundamentalsResponseRemind.md)
- - [GetFundamentalsResponseSimpleStatement](docs/GetFundamentalsResponseSimpleStatement.md)
- - [GetFundamentalsResponseSingle](docs/GetFundamentalsResponseSingle.md)
+ - [GetFundamentalsResponseSimpleStatementInner](docs/GetFundamentalsResponseSimpleStatementInner.md)
+ - [GetFundamentalsResponseSimpleStatementInnerLabelsInner](docs/GetFundamentalsResponseSimpleStatementInnerLabelsInner.md)
+ - [GetFundamentalsResponseSimpleStatementInnerListInner](docs/GetFundamentalsResponseSimpleStatementInnerListInner.md)
+ - [GetFundamentalsResponseSimpleStatementInnerSingle](docs/GetFundamentalsResponseSimpleStatementInnerSingle.md)
  - [GetIsTradeableResponse](docs/GetIsTradeableResponse.md)
- - [GetIsTradeableResponseData](docs/GetIsTradeableResponseData.md)
+ - [GetIsTradeableResponseDataInner](docs/GetIsTradeableResponseDataInner.md)
  - [GetNewsResponse](docs/GetNewsResponse.md)
  - [GetNewsResponseItems](docs/GetNewsResponseItems.md)
  - [GetOptionQuotesRequest](docs/GetOptionQuotesRequest.md)
  - [GetOptionsQuotesResponse](docs/GetOptionsQuotesResponse.md)
  - [GetOrdersItem](docs/GetOrdersItem.md)
- - [GetOrdersItemOrders](docs/GetOrdersItemOrders.md)
- - [GetOrdersItemTicker](docs/GetOrdersItemTicker.md)
- - [GetOrdersItemTickerPriceDefineList](docs/GetOrdersItemTickerPriceDefineList.md)
+ - [GetOrdersItemOrdersInner](docs/GetOrdersItemOrdersInner.md)
+ - [GetOrdersItemOrdersInnerTicker](docs/GetOrdersItemOrdersInnerTicker.md)
+ - [GetOrdersItemOrdersInnerTickerPriceDefineListInner](docs/GetOrdersItemOrdersInnerTickerPriceDefineListInner.md)
  - [GetOrdersResponse](docs/GetOrdersResponse.md)
  - [GetSecurityAccountsResponse](docs/GetSecurityAccountsResponse.md)
- - [GetSecurityAccountsResponseData](docs/GetSecurityAccountsResponseData.md)
- - [GetSecurityAccountsResponseTickerTypes](docs/GetSecurityAccountsResponseTickerTypes.md)
- - [GetSecurityAccountsResponseTimeInForces](docs/GetSecurityAccountsResponseTimeInForces.md)
- - [GetSecurityAccountsResponseUserTradePermissionVOs](docs/GetSecurityAccountsResponseUserTradePermissionVOs.md)
+ - [GetSecurityAccountsResponseDataInner](docs/GetSecurityAccountsResponseDataInner.md)
+ - [GetSecurityAccountsResponseDataInnerTickerTypesInner](docs/GetSecurityAccountsResponseDataInnerTickerTypesInner.md)
+ - [GetSecurityAccountsResponseDataInnerTimeInForcesInner](docs/GetSecurityAccountsResponseDataInnerTimeInForcesInner.md)
+ - [GetSecurityAccountsResponseDataInnerUserTradePermissionVOsInner](docs/GetSecurityAccountsResponseDataInnerUserTradePermissionVOsInner.md)
  - [GetStockAnalysisResponse](docs/GetStockAnalysisResponse.md)
  - [GetStockAnalysisResponseForecastEps](docs/GetStockAnalysisResponseForecastEps.md)
- - [GetStockAnalysisResponseForecastEpsPoints](docs/GetStockAnalysisResponseForecastEpsPoints.md)
+ - [GetStockAnalysisResponseForecastEpsPointsInner](docs/GetStockAnalysisResponseForecastEpsPointsInner.md)
  - [GetStockAnalysisResponseRating](docs/GetStockAnalysisResponseRating.md)
  - [GetStockAnalysisResponseRatingRatingSpread](docs/GetStockAnalysisResponseRatingRatingSpread.md)
  - [GetStockAnalysisResponseTargetPrice](docs/GetStockAnalysisResponseTargetPrice.md)
  - [GetStockOptionsResponse](docs/GetStockOptionsResponse.md)
- - [GetStockOptionsResponseExpireDateList](docs/GetStockOptionsResponseExpireDateList.md)
+ - [GetStockOptionsResponseExpireDateListInner](docs/GetStockOptionsResponseExpireDateListInner.md)
  - [GetStockQuoteResponse](docs/GetStockQuoteResponse.md)
  - [GetTickerChartRequest](docs/GetTickerChartRequest.md)
  - [GetTickerChartResponse](docs/GetTickerChartResponse.md)
- - [GetTickerChartResponseDates](docs/GetTickerChartResponseDates.md)
+ - [GetTickerChartResponseDatesInner](docs/GetTickerChartResponseDatesInner.md)
  - [GetTransfersRequest](docs/GetTransfersRequest.md)
  - [GetUserDetailsResponse](docs/GetUserDetailsResponse.md)
- - [InlineObject](docs/InlineObject.md)
  - [Leg](docs/Leg.md)
  - [LookupTickerResponse](docs/LookupTickerResponse.md)
- - [LookupTickerResponseList](docs/LookupTickerResponseList.md)
+ - [LookupTickerResponseListInner](docs/LookupTickerResponseListInner.md)
  - [OptionDirection](docs/OptionDirection.md)
  - [OptionOrder](docs/OptionOrder.md)
  - [OptionType](docs/OptionType.md)
@@ -179,6 +223,7 @@ Class | Method | HTTP request | Description
  - [PostTradeTokenResponse](docs/PostTradeTokenResponse.md)
  - [PostTradeTokenResponseData](docs/PostTradeTokenResponseData.md)
  - [ReplaceOptionOrderRequest](docs/ReplaceOptionOrderRequest.md)
+ - [ScreenerAttachParameter](docs/ScreenerAttachParameter.md)
  - [SmartRule](docs/SmartRule.md)
  - [TimeInForce](docs/TimeInForce.md)
  - [TradeToken](docs/TradeToken.md)
@@ -189,11 +234,26 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Authorization
 
- Endpoints do not require authorization.
+Endpoints do not require authorization.
 
 
+## Documentation for Utility Methods
+
+Due to the fact that model structure members are all pointers, this package contains
+a number of utility functions to easily obtain pointers to values of basic types.
+Each of these functions takes a value of the given basic type and returns a pointer to it:
+
+* `PtrBool`
+* `PtrInt`
+* `PtrInt32`
+* `PtrInt64`
+* `PtrFloat`
+* `PtrFloat32`
+* `PtrFloat64`
+* `PtrString`
+* `PtrTime`
 
 ## Author
 
-austin.millan@gmail.com
+austin.millan@protonmail.com
 

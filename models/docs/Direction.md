@@ -1,9 +1,12 @@
 # Direction
 
-## Properties
+## Enum
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
+
+* `DEBIT` (value: `"debit"`)
+
+* `CREDIT` (value: `"credit"`)
+
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
