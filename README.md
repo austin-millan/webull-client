@@ -32,8 +32,8 @@ package main
 
 import (
 	"fmt"
-	webull "gitlab.com/brokerage-api/webull-client/webull"
-	model "gitlab.com/brokerage-api/webull-openapi/openapi"
+	webull "gitlab.com/brokerage-api/webull-client/client"
+	model "gitlab.com/brokerage-api/webull-client/models"
 	"os"
 )
 
@@ -77,7 +77,7 @@ import (
 	"context"
 	"fmt"
 	webull "gitlab.com/brokerage-api/webull-client/webull"
-	model "gitlab.com/brokerage-api/webull-openapi/openapi"
+	model "gitlab.com/brokerage-api/webull-client/models"
 	"os"
 	"time"
 )
